@@ -1,5 +1,5 @@
 { 
-	"name": "Un Jour Un Echantillon",
+	"name": "UnJourUnEchantillon",
 	"description": "Site internet qui permet de partager des echantillons gratuits, des bons plans et des codes de reduction.",
 	"version": "0.1.0",
 	"dependencies": {
