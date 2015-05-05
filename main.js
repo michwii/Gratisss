@@ -1,8 +1,10 @@
 var express = require('express');
 var app = express();
 
+app.use(express.static(__dirname + '/public'));
+
 app.get('/', function (req, res) {
-  res.send('Hello World!');
+  res.render('index.ejs');
 });
 
-var server = app.listen(80);
+var server = app.listen(8080);
