@@ -1,0 +1,10 @@
+{ 
+	"name": "Un Jour Un Echantillon",
+	"description": "Site internet qui permet de partager des echantillons gratuits, des bons plans et des codes de reduction.",
+	"version": "0.1.0",
+	"devDependencies": {
+		"express": "*",
+		"ejs": "*",
+	},
+	"main": "main.js"
+}
