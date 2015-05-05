@@ -4,7 +4,8 @@
 	"version": "0.1.0",
 	"dependencies": {
 		"express": "latest",
-		"ejs": "latest"
+		"ejs": "latest",
+		"forever": "latest"
 	},
 	"main": "main.js"
 }
