@@ -7,6 +7,6 @@ app.get('/', function (req, res) {
   res.render('index.ejs');
 });
 
-var server = app.listen(3000, function(){
+var server = app.listen(80, function(){
 	console.log("The server has been launched");
 });
