@@ -1,4 +1,30 @@
-    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v2.3&appId=332597090088357";
+  fjs.parentNode.insertBefore(js, fjs);
+  
+  FB.init({
+      appId      : '332597090088357', // App ID
+      channelURL : 'http://130.211.58.49/', // Channel File
+      status     : true, // check login status
+      cookie     : true, // enable cookies to allow the server to access the session
+      oauth      : true, // enable OAuth 2.0
+      xfbml      : true  // parse XFBML
+    });
+
+    FB.Event.subscribe('comment.create',
+        function(response) {
+            alert('A new comment has been added!');
+        }
+    );
+
+  
+}(document, 'script', 'facebook-jssdk'));</script>
+    
+	<div class="navbar navbar-inverse navbar-static-top" role="navigation">
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle pull-right" data-toggle="collapse" data-target=".navbar-ex1-collapse">
