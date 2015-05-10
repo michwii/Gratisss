@@ -4,7 +4,13 @@
 	"version": "0.1.0",
 	"dependencies": {
 		"express": "latest",
-		"ejs": "latest"
+		"ejs": "latest",
+		"body-parser": "latest",
+		"mongodb": "~2.0"
+	},
+	"repository" :{ 
+		"type" : "git", 
+		"url" : "https://github.com/michwii/UnJourUnEchantillon"
 	},
 	"main": "main.js"
 }
