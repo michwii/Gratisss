@@ -23,9 +23,9 @@ app.post('/inscription', function (req, res) {
 	if(password == passwordAgain){
 		//A ce moment la precis on devrait creer un cookie de session et le renvoyer vers la page d'acceuil
 		
-		res.render(__dirname + '/view/index.ejs');
+		res.render(__dirname + '/views/index.ejs');
 	}else{
-		res.render(__dirname + '/view/inscription.ejs', {error: "Les mots de passe ne sont pas equivalents"});
+		res.render(__dirname + '/views/inscription.ejs', {error: "Les mots de passe ne sont pas equivalents"});
 	}
 });
 
