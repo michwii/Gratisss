@@ -8,11 +8,11 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', function (req, res) {
-  res.render(__dirname + '/view/index.ejs');
+  res.render(__dirname + '/views/index.ejs');
 });
 
 app.get('/inscription', function (req, res) {
-  res.render(__dirname + '/view/inscription.ejs');
+  res.render(__dirname + '/views/inscription.ejs');
 });
 
 app.post('/inscription', function (req, res) {

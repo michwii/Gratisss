@@ -6,7 +6,7 @@
 		"express": "latest",
 		"ejs": "latest",
 		"body-parser": "latest",
-		"mongodb": "~2.0"
+		"mongodb": "latest"
 	},
 	"repository" :{ 
 		"type" : "git", 
