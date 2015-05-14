@@ -1,16 +1,16 @@
-{ 
-	"name": "UnJourUnEchantillon",
-	"description": "Site internet qui permet de partager des echantillons gratuits, des bons plans et des codes de reduction.",
-	"version": "0.1.0",
-	"dependencies": {
-		"express": "latest",
-		"ejs": "latest",
-		"body-parser": "latest",
-		"mongodb": "latest"
-	},
-	"repository" :{ 
-		"type" : "git", 
-		"url" : "https://github.com/michwii/UnJourUnEchantillon"
-	},
-	"main": "main.js"
+{
+  "name": "UnJourUnEchantillon",
+  "description": "Site internet qui permet de partager des echantillons gratuits, des bons plans et des codes de reduction.",
+  "version": "0.1.0",
+  "dependencies": {
+    "body-parser": "latest",
+    "ejs": "latest",
+    "express": "latest",
+    "mongodb": "latest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/michwii/UnJourUnEchantillon"
+  },
+  "main": "main.js"
 }

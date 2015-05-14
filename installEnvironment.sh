@@ -21,7 +21,8 @@ git clone https://github.com/michwii/UnJourUnEchantillon
 #FIN -- On va chercher les sources du projet
 #On installe les dependances npm du projet
 cd UnJourUnEchantillon
-sudo npm install
+sudo npm install --unsafe-perm
+#Le unsafe-perm est important car sinon il essayera d'installer des dependances sans etre root et ca ne marchera pas.
 sudo npm install forever -g
 #FIN On installe les dependances npm du projet
 #On lance le server nodeJS en mode service
