@@ -5,11 +5,7 @@ var userService = require(__dirname + '/services/users.js');
 
 
 app.use( bodyParser.json() );       // to support JSON-encoded bodies
-app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
-  extended: true
-})); 
-
-
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', function (req, res) {
@@ -26,9 +22,12 @@ app.post('/users', function (req, res) {
 
 	var emailToSave = req.body.email;
 	var passwordToSave = req.body.password;
-	var postData = req.body.text;
 
-	console.log(req.query);
+	
+	
+	console.log("email " + emailToSave);
+	console.log("passwordToSave " + passwordToSave);
+	console.log("postData " + postData);
 	
 	userService.insertUser({email: emailToSave, password: passwordToSave}, function(err, result){
 		res.end(JSON.stringify({success: 'ok'}));
