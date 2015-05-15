@@ -14,13 +14,13 @@ app.get('/', function (req, res) {
 	res.render(__dirname + '/views/index.ejs');
 });
 
-app.get('/users', function (req, res) {
+app.get('/api/users', function (req, res) {
 	userService.getAllUsers(null, function(err, result){
 		res.end(JSON.stringify(result));
 	});
 });
 
-app.post('/users', function (req, res) {
+app.post('/api/users', function (req, res) {
 
 	var emailToSave = req.body.email;
 	var passwordToSave = req.body.password;
@@ -30,8 +30,8 @@ app.post('/users', function (req, res) {
 		userService.insertUser(userToCreate, function(err, result){
 			var returnedMessage = new Object();
 			returnedMessage.sucess = "ok";
-			returnedMessage.userCreated = userToCreate;
-			res.end(JSON.stringify(err));
+			returnedMessage.userCreated = result;
+			res.end(JSON.stringify(returnedMessage));
 		});
 	}else{//we then return an exception
 		var errorJustification = new Object();

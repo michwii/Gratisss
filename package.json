@@ -8,7 +8,8 @@
     "ejs": "latest",
     "express": "latest",
     "mongodb": "latest",
-    "mongoose": "latest"
+    "mongoose": "latest",
+    "mongoose-auto-increment": "^4.0.0"
   },
   "repository": {
     "type": "git",
