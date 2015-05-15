@@ -2,6 +2,8 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var app = express();
 var userService = require(__dirname + '/services/users.js');
+var md5 = require('md5');
+var utils = require(__dirname + '/services/utils.js');
 
 
 app.use( bodyParser.json() );       // to support JSON-encoded bodies
@@ -22,16 +24,21 @@ app.post('/users', function (req, res) {
 
 	var emailToSave = req.body.email;
 	var passwordToSave = req.body.password;
-
 	
-	
-	console.log("email " + emailToSave);
-	console.log("passwordToSave " + passwordToSave);
-	console.log("postData " + postData);
-	
-	userService.insertUser({email: emailToSave, password: passwordToSave}, function(err, result){
-		res.end(JSON.stringify({success: 'ok'}));
-	});
+	if(emailToSave != undefined && passwordToSave != undefined && utils.validateEmail(emailToSave)){
+		var userToCreate = {email: emailToSave, password: md5(passwordToSave)};
+		userService.insertUser(userToCreate, function(err, result){
+			var returnedMessage = new Object();
+			returnedMessage.sucess = "ok";
+			returnedMessage.userCreated = userToCreate;
+			res.end(JSON.stringify(err));
+		});
+	}else{//we then return an exception
+		var errorJustification = new Object();
+		errorJustification.success = "ko";
+		errorJustification.message = "Les parametres fournits en entree ne sont pas corrects ou imcomplets"
+		res.end(JSON.stringify(errorJustification));
+	}	
 });
 
 

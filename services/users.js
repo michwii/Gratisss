@@ -1,39 +1,44 @@
-var MongoClient = require('mongodb').MongoClient
-var assert = require('assert');
+var mongoose = require('mongoose');
 
 // Connection URL
-var url = 'mongodb://localhost:27017/';
+var urlDatabase = 'mongodb://localhost:27017/';
+var Schema = mongoose.Schema;
+var ObjectId = Schema.ObjectId;
+
+var UsersSchema = new Schema({
+	id			: ObjectId,
+    email   	: String,
+	password   	: String,
+	name    	: String,
+	surname		: String
+});
+var Users = mongoose.model('Users', UsersSchema);
+
+mongoose.connect(urlDatabase);
 
 
+  
 exports.insertUser = function (user, callback){
-	// Use connect method to connect to the Server
-	MongoClient.connect(url, function(err, db) {
+	var userToInsert =new Users();
+	userToInsert.email= user.email;
+	userToInsert.password = user.password;
+	
+	userToInsert.save(function (err) {
 		if(err){
+			console.log("Erreur lors de l'insertion d'un user");
 			callback(err, null);
-			db.close();
-			return;
 		}
-		insertUser(db, user, function(result){
-			callback(err, result);
-			db.close();
-		});
-		
+		callback(err, userToInsert);
 	});
 } 
 
-exports.getAllUsers = function (user, callback){
-	// Use connect method to connect to the Server
-	MongoClient.connect(url, function(err, db) {
+exports.getAllUsers = function (parametersOfSearch, callback){
+	Users.find(parametersOfSearch, function (err, docs) {
 		if(err){
+			console.log("Erreur lors de la recherche d'un user");
 			callback(err, null);
-			db.close();
-			return;
 		}
-		getAllUsers(db, user, function(result){
-			callback(err, result);
-			db.close();
-		});
-		
+		callback(err, docs);
 	});
 } 
 

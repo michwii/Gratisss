@@ -3,10 +3,12 @@
   "description": "Site internet qui permet de partager des echantillons gratuits, des bons plans et des codes de reduction.",
   "version": "0.1.0",
   "dependencies": {
+    "MD5": "latest",
     "body-parser": "latest",
     "ejs": "latest",
     "express": "latest",
-    "mongodb": "latest"
+    "mongodb": "latest",
+    "mongoose": "latest"
   },
   "repository": {
     "type": "git",
