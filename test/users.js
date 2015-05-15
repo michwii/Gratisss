@@ -1,4 +1,4 @@
-var userService = require(__dirname + "\\..\\services\\users.js");
+var userService = require(__dirname + "/../services/users.js");
 
 var userSavedArray = new Array();
 
