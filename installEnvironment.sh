@@ -24,6 +24,7 @@ cd UnJourUnEchantillon
 sudo npm install --unsafe-perm
 #Le unsafe-perm est important car sinon il essayera d'installer des dependances sans etre root et ca ne marchera pas.
 sudo npm install forever -g
+sudo npm install nodeunit -g
 #FIN On installe les dependances npm du projet
 #On lance le server nodeJS en mode service
 sudo forever start main.js

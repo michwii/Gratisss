@@ -10,7 +10,7 @@
     "express": "latest",
     "mongodb": "latest",
     "mongoose": "latest",
-    "mongoose-auto-increment": "^4.0.0"
+    "mongoose-auto-increment": "latest"
   },
   "repository": {
     "type": "git",
