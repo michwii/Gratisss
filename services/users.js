@@ -8,7 +8,7 @@ var ObjectId = Schema.ObjectId;
 
 
 var connection = mongoose.connect(urlDatabase);
-autoIncrement.initialize(mongoose.connection);
+autoIncrement.initialize(connection);
 
 var UsersSchema = new Schema({
 	id			: ObjectId,
@@ -20,7 +20,9 @@ var UsersSchema = new Schema({
 var Users = mongoose.model('Users', UsersSchema);
 
 UsersSchema.plugin(autoIncrement.plugin, 'Users');
-  
+ 
+exports.Users = Users;
+
 exports.insertUser = function (user, callback){
 	var userToInsert = new Users();
 	userToInsert.email= user.email;
@@ -34,6 +36,12 @@ exports.insertUser = function (user, callback){
 		callback(err, userInserted);
 	});
 } 
+
+exports.delete = function(id, callback){
+	Users.remove({_id: id}, function(err){
+		callback(err);
+	});
+}
 
 exports.getAllUsers = function (parametersOfSearch, callback){
 	Users.find(parametersOfSearch, function (err, docs) {

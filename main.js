@@ -20,6 +20,13 @@ app.get('/api/users', function (req, res) {
 	});
 });
 
+app.delete('/api/users/:id', function (req, res) {
+	var id = req.params.id;
+	userService.delete(id, function(err, result){
+		res.end(JSON.stringify(result));
+	});
+});
+
 app.post('/api/users', function (req, res) {
 
 	var emailToSave = req.body.email;
