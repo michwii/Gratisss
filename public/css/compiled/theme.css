@@ -24,7 +24,9 @@ input[type="text"],
 input[type="password"],
 input[type="submit"],
 textarea {
-  font-family: 'Lato', Helvetica; }
+  font-family: 'Lato', Helvetica; 
+  margin-bottom: 16px;
+}
 
 body.pull_top {
   padding-top: 0px !important; }

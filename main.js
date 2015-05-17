@@ -21,12 +21,14 @@ app.get('/', function (req, res) {
 });
 
 app.get('/api/users', function (req, res) {
+	res.setHeader('Content-Type', 'application/json');
 	userService.getAllUsers(null, function(err, result){
 		res.end(JSON.stringify(result));
 	});
 });
 
 app.delete('/api/users/:id', function (req, res) {
+	res.setHeader('Content-Type', 'application/json');
 	var id = req.params.id;
 	userService.delete(id, function(err){
 		var returnedMessage = new Object();
@@ -45,6 +47,8 @@ app.post('/api/users', function (req, res) {
 
 	var emailToSave = req.body.email;
 	var passwordToSave = req.body.password;
+	var session = req.session;
+	res.setHeader('Content-Type', 'application/json');
 	
 	if(emailToSave != undefined && passwordToSave != undefined && utils.validateEmail(emailToSave)){
 		var userToCreate = {email: emailToSave, password: md5(passwordToSave)};
@@ -52,7 +56,7 @@ app.post('/api/users', function (req, res) {
 		userService.verifyIfEmailAlreadyExist(emailToSave,function(err, result){
 			if(result){
 				var returnedMessage = new Object();
-				returnedMessage.sucess = "ok";
+				returnedMessage.sucess = "ko";
 				returnedMessage.message = "L'adresse email rensigne est deja utilise";
 				res.end(JSON.stringify(returnedMessage));
 			}else{
@@ -60,6 +64,7 @@ app.post('/api/users', function (req, res) {
 					var returnedMessage = new Object();
 					returnedMessage.sucess = "ok";
 					returnedMessage.userCreated = result;
+					session.user = result;
 					res.end(JSON.stringify(returnedMessage));
 				});
 			}
@@ -94,7 +99,7 @@ app.post('/inscription', function (req, res) {
 });
 
 app.get('/connexion', function (req, res) {
-	res.render(__dirname + '/views/connexion.ejs');
+	res.render(__dirname + '/views/connexion.ejs', {error : null});
 });
 
 app.post('/connexion', function (req, res) {
