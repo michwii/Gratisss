@@ -2,7 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var userService = require(__dirname + '/services/users.js');
-var md5 = require('md5');
+var md5 = require('MD5');
 var utils = require(__dirname + '/services/utils.js');
 
 var app = express();
