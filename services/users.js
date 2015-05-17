@@ -21,6 +21,15 @@ var Users = mongoose.model('Users', UsersSchema);
 
 UsersSchema.plugin(autoIncrement.plugin, 'Users');
  
+// middleware
+UsersSchema.pre('save', function (next, done) {
+	exports.verifyIfEmailAlreadyExist(this.email, function(err, result){
+		if(err || result)
+			next(new Error("email must be unique"));
+		next();
+	});
+});
+ 
 exports.Users = Users;
 
 exports.insertUser = function (user, callback){
@@ -37,11 +46,33 @@ exports.insertUser = function (user, callback){
 	});
 } 
 
+exports.verifyIfEmailAlreadyExist = function(email, callback){
+	Users.findOne({email: email}, function(err, result){
+		if(err != null){
+			callback(err, null);
+		}
+		if (result == null){
+			callback(err, false);
+		}else{
+			callback(err, true);
+		}
+	});
+}
+
 exports.delete = function(id, callback){
 	Users.remove({_id: id}, function(err){
 		callback(err);
 	});
-}
+};
+
+exports.getOneUser = function(parametersOfSearch, callback){
+	Users.findOne(parametersOfSearch, function(err, result){
+		if(err != null){
+			callback(err, null);
+		}
+		callback(err, result);
+	});
+};
 
 exports.getAllUsers = function (parametersOfSearch, callback){
 	Users.find(parametersOfSearch, function (err, docs) {
@@ -52,5 +83,3 @@ exports.getAllUsers = function (parametersOfSearch, callback){
 		callback(err, docs);
 	});
 } 
-
-

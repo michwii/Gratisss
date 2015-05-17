@@ -1,0 +1,60 @@
+<% include header %>
+<body class="pull_top">
+    
+	<% include navBar %>
+
+    <!-- Sign In Option 1 -->
+    <div id="sign_in1">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 header">
+                    <h4>Connectez-vous a votre compte</h4>
+                    <p>Avoir un compte chez Un jour un Echantillon permet de beneficier d'echantillons gratuits et de bons plans exclusifs </p>
+
+                    <div class="col-md-4 social">
+                        <a href="#" class="circle facebook">
+                            <img src="img/face.png" alt="">
+                        </a>
+                         <a href="#" class="circle twitter">
+                            <img src="img/twt.png" alt="">
+                        </a>
+                         <a href="#" class="circle gplus">
+                            <img src="img/gplus.png" alt="">
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-sm-3 division">
+                    <div class="line l"></div>
+                    <span>or</span>
+                    <div class="line r"></div>
+                </div>
+
+                <div class="col-md-12 footer">
+                    <form action="connexion" method="POST" class="form-inline">
+                        <input type="text" name="email" placeholder="Email" class="form-control">
+                        <input type="password" name="password" placeholder="Password" class="form-control">
+                        <input type="submit" value="Connexion">
+                    </form>
+                </div>
+
+                <div class="col-md-12 proof">
+                    <div class="col-md-6 remember">
+                        <label class="checkbox">
+                            <input type="checkbox"> Se souvenir de moi
+                        </label>
+                        <a href="reset.html">Mot de passe oublie?</a>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="dosnt">
+                            <span>Je n'ai pas encore de compte?</span>
+                            <a href="inscription">Inscription</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+	
+	<% include footer %>

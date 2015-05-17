@@ -1,5 +1,5 @@
 var userService = require(__dirname + "/../services/users.js");
-
+var mongoose = require('mongoose');//On a besoin de mongoose pour pouvoir fermer la connection a la data base a la fin
 var userSavedArray = new Array();
 
 exports.insert = function assertInsertion(assert){
@@ -18,8 +18,28 @@ exports.insert = function assertInsertion(assert){
 	}
 };
 
-exports.duplicate = function assertDuplicateMail(assert){
-	assert.done();
+exports.insertDuplicate = function assertInsertDuplicate(assert){
+	var userToInsert = new userService.Users();
+	userToInsert.email = "email5@yahoo.fr";
+	userToInsert.password = "password";
+	userToInsert.save(function (err, userSaved){
+		assert.notEqual(err, null, "L'insertion duplicate a fonctionner alors que ca n'aurait pas du");
+		assert.done();
+	});
+}
+
+exports.duplicateEmail = function assertDuplicateMail(assert){
+	
+	userService.verifyIfEmailAlreadyExist("email5@yahoo.fr", function(err, result){
+		assert.equal(err, null, "erreur dans la verif de duplication d'email");
+		assert.ok(result);
+		userService.verifyIfEmailAlreadyExist("emailWhoDontExistYet@yahoo.fr", function(err, result){
+			assert.equal(err, null, "erreur dans la verif de duplication d'email");
+			assert.equal(result, false, "erreur dans la verif de duplication d'email");
+			assert.done();
+		});
+	});
+	
 };
 
 exports.gellAll = function assetGetAll(assert){
@@ -37,8 +57,10 @@ exports.delete = function assertSuppression(assert){
 			assert.equals(err, null, "La suppression n'a pas fonctionne correctement");
 			userSavedArray.pop();
 			if(userSavedArray.length ==0){
+				mongoose.connection.close();//On ferme la connection pour etre sur que nodeunit se ferme correctement
 				assert.done();
 			}
 		});
 	});
+	
 };
