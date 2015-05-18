@@ -107,21 +107,6 @@ app.get('/inscription', function (req, res) {
 	res.render(__dirname + '/views/inscription.ejs');
 });
 
-app.post('/inscription', function (req, res) {
-	var email = req.body.email;
-	var password = req.body.password;
-	var passwordAgain = req.body.passwordAgain;
-	
-	if(password == passwordAgain){
-		//A ce moment la precis on devrait creer un cookie de session et le renvoyer vers la page d'acceuil
-		userService.insertUser({email: email, password: password}, function(err, result){
-			res.render(__dirname + '/views/index.ejs');
-		});
-	}else{
-		res.render(__dirname + '/views/inscription.ejs', {error: "Les mots de passe ne sont pas equivalents"});
-	}
-});
-
 app.get('/connexion', function (req, res) {
 	res.render(__dirname + '/views/connexion.ejs', {error : null});
 });
