@@ -45,7 +45,9 @@ exports.duplicateEmail = function assertDuplicateMail(assert){
 exports.gellAll = function assetGetAll(assert){
 	var allUsers = userService.getAllUsers(function(err, allUser){
 		assert.equal(err, null, "Il y a une erreur dans le getAllUser");
-		assert.equal(allUser.length, 10 , "le getall n'a pas retourne 10 utilisateurs");
+		for(var i = 0; i < 10; i++){
+			assert.equal(userSavedArray[i]._id, allUser[allUser.length - (10-i)]._id,"le getall n'a pas retourne 10 utilisateurs");
+		}
 		assert.done();
 	});
 };

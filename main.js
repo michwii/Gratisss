@@ -38,7 +38,7 @@ app.delete('/api/users/:id', function (req, res) {
 		}
 	
 		returnedMessage.sucess = "ok";
-		returnedMessage.message = "L'utilisateur a ete supprime corectement";
+		returnedMessage.message = "L'utilisateur a ete supprime correctement";
 		res.end(JSON.stringify(returnedMessage));
 	});
 });
@@ -76,6 +76,28 @@ app.post('/api/users', function (req, res) {
 		errorJustification.message = "Les parametres fournits en entree ne sont pas corrects ou imcomplets"
 		res.end(JSON.stringify(errorJustification));
 	}	
+});
+
+app.post('/api/users/connexion', function (req, res) {
+	var session = req.session;
+	var email = req.body.email;
+	var password = req.body.password;
+	
+	userService.getOneUser({email:email, password:md5(password)}, function(err, result){
+	
+		if(err || result == null){
+			var errorJustification = new Object();
+			errorJustification.success = "ko";
+			errorJustification.message = "Le login ou le mot de passe sont incorrects"
+			res.end(JSON.stringify(errorJustification));
+		}else{
+			var returnedMessage = new Object();
+			returnedMessage.sucess = "ok";
+			returnedMessage.userConnected = result;
+			session.user = result;
+			res.end(JSON.stringify(returnedMessage));
+		}
+	});
 });
 
 
