@@ -42,8 +42,15 @@
                     <li><a href="about-us.html">A propos de nous</a></li>
                     <li><a href="contact.html">Codes de reduction</a></li>
                     <li><a href="blog.html">BLOG</a></li>
-                    <li><a href="inscription">S'inscrire</a></li>
+					<%
+						if(user){%>
+					<li>Bienvenu <a href="users/<%=user._id %>"><%= user.email %></a></li>
+                    <li><a href="deconexion">Se deconnecter</a></li>
+					<%		}else{%>
+					<li><a href="inscription">S'inscrire</a></li>
                     <li><a href="connexion">Se connecter</a></li>
+					<%	}
+					%>
                 </ul>
             </div>
         </div>

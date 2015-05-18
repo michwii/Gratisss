@@ -17,7 +17,9 @@ app.use(session({
 }))
 
 app.get('/', function (req, res) {
-	res.render(__dirname + '/views/index.ejs');
+	var session = req.session;
+	var userConnected = session.user;
+	res.render(__dirname + '/views/index.ejs', {user: userConnected});
 });
 
 app.get('/api/users', function (req, res) {
@@ -104,11 +106,17 @@ app.post('/api/users/connexion', function (req, res) {
 
 
 app.get('/inscription', function (req, res) {
-	res.render(__dirname + '/views/inscription.ejs');
+	var session = req.session;
+	var userConnected = session.user;
+
+	res.render(__dirname + '/views/inscription.ejs', {user: userConnected});
 });
 
 app.get('/connexion', function (req, res) {
-	res.render(__dirname + '/views/connexion.ejs', {error : null});
+	var session = req.session;
+	var userConnected = session.user;
+
+	res.render(__dirname + '/views/connexion.ejs', {error : null, user: userConnected});
 });
 
 
