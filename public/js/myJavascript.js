@@ -2,6 +2,25 @@ function logIn(event){
 	var form = event.target;
 	event.stopPropagation(); // Stop stuff happening
 	event.preventDefault(); // Totally stop stuff happening
+	var email = $(form).find( "input[name='email']" ).val()
+	var password = $(form).find( "input[name='password']" ).val();
+	
+	$.post( "api/users/connexion", { email: email, password: password }).done(function( data ) {
+		var response = data;
+		console.log(response);
+		if(response.success == "ko"){
+			$('#formError').show();
+			$('#formError').html(response.message);
+		}else{
+			window.location.replace("/");
+		}
+	});
+}
+
+function signUp(event){
+	var form = event.target;
+	event.stopPropagation(); // Stop stuff happening
+	event.preventDefault(); // Totally stop stuff happening
 	console.log(form);
 	var email = $(form).find( "input[name='email']" ).val()
 	var password = $(form).find( "input[name='password']" ).val();
@@ -17,4 +36,5 @@ function logIn(event){
 			window.location.replace("/");
 		}
 	});
+
 }

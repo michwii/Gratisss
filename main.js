@@ -79,6 +79,8 @@ app.post('/api/users', function (req, res) {
 });
 
 app.post('/api/users/connexion', function (req, res) {
+	res.setHeader('Content-Type', 'application/json');
+
 	var session = req.session;
 	var email = req.body.email;
 	var password = req.body.password;
@@ -92,7 +94,7 @@ app.post('/api/users/connexion', function (req, res) {
 			res.end(JSON.stringify(errorJustification));
 		}else{
 			var returnedMessage = new Object();
-			returnedMessage.sucess = "ok";
+			returnedMessage.success = "ok";
 			returnedMessage.userConnected = result;
 			session.user = result;
 			res.end(JSON.stringify(returnedMessage));
@@ -124,21 +126,6 @@ app.get('/connexion', function (req, res) {
 	res.render(__dirname + '/views/connexion.ejs', {error : null});
 });
 
-app.post('/connexion', function (req, res) {
-	var session = req.session;
-	var email = req.body.email;
-	var password = req.body.password;
-	
-	userService.getOneUser({email:email, password:md5(password)}, function(err, result){
-	
-		if(err || result == null){
-			res.render(__dirname + '/views/connexion.ejs', {error: "Le login ou le mot de passe sont incorrect"});
-		}else{
-			session.user = result;
-			res.redirect('/');
-		}
-	});
-});
 
 var server = app.listen(80, function(){
 	console.log("The server has been launched");

@@ -29,13 +29,11 @@
                     <span>or</span>
                     <div class="line r"></div>
                 </div>
-				<%
-					if(error){%>
-						<div class="alert alert-danger" role="alert"><span class="label label-danger">Erreur</span> Le login ou le mot de passe sont incorrect</div>
-				<%	}%>
-								
-                <div class="col-md-12 footer">
-                    <form action="connexion" method="POST" class="form-inline">
+				
+				<div id="formError" class="alert alert-danger" style="display: none;" role="alert"></div>								
+               
+			   <div class="col-md-12 footer">
+                    <form method="POST" class="form-inline" onsubmit="return logIn(event);">
                         <input type="text" name="email" placeholder="Email" class="form-control">
                         <input type="password" name="password" placeholder="Password" class="form-control">
                         <input type="submit" value="Connexion">
