@@ -22,7 +22,6 @@ app.use(session({
 app.get('/', function (req, res) {
 	var session = req.session;
 	var userConnected = session.user;
-	console.log(userConnected);
 	res.render(__dirname + '/views/index.ejs', {user: userConnected});
 });
 
@@ -86,7 +85,7 @@ app.post('/api/users', function (req, res) {
 		var loginBindFunction = userService.loginAlreadyExist.bind(undefined, loginToSave);
 		async.parallel([emailBindFunction, loginBindFunction], function(err, result){
 			if(err || result[0] || result[1]){
-				returnedMessage.sucess = "ko";
+				returnedMessage.success = "ko";
 				returnedMessage.message = "L'adresse email ou le login rensigne est deja utilise";
 				res.end(JSON.stringify(returnedMessage));
 			}else{
@@ -114,15 +113,14 @@ app.post('/api/users/connexion', function (req, res) {
 	var email = req.body.email;
 	var password = req.body.password;
 	
-	userService.connectionInformationAreCorrect(email, md5(password), function(err, result){
-	
-		if(err || result == false){
-			var errorJustification = new Object();
-			errorJustification.success = "ko";
-			errorJustification.message = "Le login ou le mot de passe sont incorrects"
-			res.end(JSON.stringify(errorJustification));
+	userService.getOneUser({email: email, password:md5(password)}, function(err, result){
+		var returnedMessage = new Object();
+
+		if(err || result == null){
+			returnedMessage.success = "ko";
+			returnedMessage.message = "Le login ou le mot de passe sont incorrects"
+			res.end(JSON.stringify(returnedMessage));
 		}else{
-			var returnedMessage = new Object();
 			returnedMessage.success = "ok";
 			returnedMessage.userConnected = result;
 			req.session.user = result;

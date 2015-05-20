@@ -29,6 +29,7 @@ function signUp(event){
 	
 	$.post( "api/users", { email: email, password: password, login:login }).done(function( data ) {
 		var response = data;
+		console.log(data);
 		if(response.success == "ko"){
 			$('#formError').show();
 			$('#formError').html(response.message);
