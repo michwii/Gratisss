@@ -14,6 +14,7 @@ var UsersSchema = new Schema({
 	id			: ObjectId,
     email   	: String,
 	password   	: String,
+	login		: String,
 	name    	: String,
 	surname		: String
 });
@@ -23,11 +24,16 @@ UsersSchema.plugin(autoIncrement.plugin, 'Users');
  
 // middleware
 UsersSchema.pre('save', function (next, done) {
-	exports.verifyIfEmailAlreadyExist(this.email, function(err, result){
-		if(err || result)
+
+	var emailBindFunction = exports.emailAlreadyExist.bind(undefined, this.email);
+	var loginBindFunction = exports.loginAlreadyExist.bind(undefined, this.login);
+
+	async.parallel([emailBindFunction, loginBindFunction], function (err, result){
+		if(err || result[0] || result[1])
 			next(new Error("email must be unique"));
 		next();
 	});
+	
 });
  
 exports.Users = Users;
@@ -36,7 +42,7 @@ exports.insertUser = function (user, callback){
 	var userToInsert = new Users();
 	userToInsert.email= user.email;
 	userToInsert.password = user.password;
-	
+	userToInsert.login = user.login;
 	userToInsert.save(function (err, userInserted) {
 		if(err){
 			console.log("Erreur lors de l'insertion d'un user");
@@ -46,8 +52,21 @@ exports.insertUser = function (user, callback){
 	});
 } 
 
-exports.verifyIfEmailAlreadyExist = function(email, callback){
+exports.emailAlreadyExist = function(email, callback){
 	Users.findOne({email: email}, function(err, result){
+		if(err != null){
+			callback(err, null);
+		}
+		if (result == null){
+			callback(err, false);
+		}else{
+			callback(err, true);
+		}
+	});
+};
+
+exports.loginAlreadyExist = function(login, callback){
+	Users.findOne({login: login}, function(err, result){
 		if(err != null){
 			callback(err, null);
 		}

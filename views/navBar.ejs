@@ -44,7 +44,7 @@
                     <li><a href="blog.html">BLOG</a></li>
 					<%
 						if(user){%>
-					<li>Bienvenu <a href="users/<%=user._id %>"><%= user.email %></a></li>
+					<li><a href="users/<%=user._id %>"><%= user.login %></a></li>
                     <li><a href="deconexion">Se deconnecter</a></li>
 					<%		}else{%>
 					<li><a href="inscription">S'inscrire</a></li>

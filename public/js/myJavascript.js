@@ -22,11 +22,12 @@ function signUp(event){
 	event.stopPropagation(); // Stop stuff happening
 	event.preventDefault(); // Totally stop stuff happening
 	console.log(form);
-	var email = $(form).find( "input[name='email']" ).val()
+	var email = $(form).find( "input[name='email']" ).val();
+	var login = $(form).find( "input[name='login']" ).val();
 	var password = $(form).find( "input[name='password']" ).val();
 	var confirmPassword = $(form).find( "input[name='passwordAgain']" ).val();
 	
-	$.post( "api/users", { email: email, password: password }).done(function( data ) {
+	$.post( "api/users", { email: email, password: password, login:login }).done(function( data ) {
 		var response = data;
 		if(response.success == "ko"){
 			$('#formError').show();

@@ -9,6 +9,7 @@ exports.insert = function assertInsertion(assert){
 		var userToInsert = new userService.Users();
 		userToInsert.email = "email"+i+"@yahoo.fr";
 		userToInsert.password = "password";
+		userToInsert.login = "login"+i;
 		userToInsert.save(function (err, userSaved){
 			assert.equal(err, null, "L'insertion n'a pas fonctionne");
 			userSavedArray.push(userSaved);
@@ -19,26 +20,46 @@ exports.insert = function assertInsertion(assert){
 	}
 };
 
-exports.insertDuplicate = function assertInsertDuplicate(assert){
+exports.insertDuplicateEmail = function assertInsertDuplicate(assert){
 	var userToInsert = new userService.Users();
 	userToInsert.email = "email5@yahoo.fr";
 	userToInsert.password = "password";
+	userToInsert.login= "loginWhichDoesExistYet";
 	userToInsert.save(function (err, userSaved){
-		assert.notEqual(err, null, "L'insertion duplicate a fonctionner alors que ca n'aurait pas du");
+		assert.notEqual(err, null, "L'insertion duplicate email a fonctionner alors que ca n'aurait pas du");
+		assert.done();
+	});
+}
+
+exports.insertDuplicateLogin = function assertInsertDuplicate(assert){
+	var userToInsert = new userService.Users();
+	userToInsert.email = "emailWhichDoesntExistYet@yahoo.fr";
+	userToInsert.password = "password";
+	userToInsert.login= "login5";
+	userToInsert.save(function (err, userSaved){
+		assert.notEqual(err, null, "L'insertion duplicate login a fonctionner alors que ca n'aurait pas du");
 		assert.done();
 	});
 }
 
 exports.duplicateEmail = function assertDuplicateMail(assert){
 	
-	userService.verifyIfEmailAlreadyExist("email5@yahoo.fr", function(err, result){
+	async.map(["email5@yahoo.fr", "emailWhichDoesntExistYet@yahoo.fr"], userService.emailAlreadyExist, function(err, result){
 		assert.equal(err, null, "erreur dans la verif de duplication d'email");
-		assert.ok(result);
-		userService.verifyIfEmailAlreadyExist("emailWhoDontExistYet@yahoo.fr", function(err, result){
-			assert.equal(err, null, "erreur dans la verif de duplication d'email");
-			assert.equal(result, false, "erreur dans la verif de duplication d'email");
-			assert.done();
-		});
+		assert.equal(result[0], true);
+		assert.equal(result[1], false, "erreur dans la verif de duplication d'email");
+		assert.done();
+	});
+	
+};
+
+exports.duplicateLogin = function assertDuplicateMail(assert){
+	
+	async.map(["login5", "loginWhichDoesntExistYet"], userService.loginAlreadyExist, function(err, result){
+		assert.equal(err, null, "erreur dans la verif de duplication d'email");
+		assert.equal(result[0], true);
+		assert.equal(result[1], false, "erreur dans la verif de duplication d'email");
+		assert.done();
 	});
 	
 };
