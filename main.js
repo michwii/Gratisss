@@ -144,6 +144,10 @@ app.get('/connexion', function (req, res) {
 	res.render(__dirname + '/views/connexion.ejs', {user: userConnected});
 });
 
+app.get('/deconnexion', function (req, res) {
+	req.session.destroy();
+	res.redirect("/");
+});
 
 var server = app.listen(80, function(){
 	console.log("The server has been launched");
