@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
-autoIncrement = require('mongoose-auto-increment');
-
+var autoIncrement = require('mongoose-auto-increment');
+var async = require("async");
 // Connection URL
 var urlDatabase = 'mongodb://localhost:27017/';
 var Schema = mongoose.Schema;
@@ -82,4 +82,14 @@ exports.getAllUsers = function (parametersOfSearch, callback){
 		}
 		callback(err, docs);
 	});
-} 
+};
+
+exports.connectionInformationAreCorrect = function(emailOrLogin, md5Password, callback){
+	async.map([{email:emailOrLogin, password: md5Password}, {login:emailOrLogin, password: md5Password}], exports.getOneUser, function(err, result){	
+		if(result[0] == null && result[1] == null){
+			callback(err, false);
+		}else{
+			callback(err, true);
+		}
+	});
+};

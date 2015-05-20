@@ -1,5 +1,6 @@
 var userService = require(__dirname + "/../services/users.js");
 var mongoose = require('mongoose');//On a besoin de mongoose pour pouvoir fermer la connection a la data base a la fin
+var async = require('async');
 var userSavedArray = new Array();
 
 exports.insert = function assertInsertion(assert){
@@ -42,6 +43,18 @@ exports.duplicateEmail = function assertDuplicateMail(assert){
 	
 };
 
+exports.connexion = function assertConnexion(assert){
+
+	var bindVerifConnectionInformation = userService.connectionInformationAreCorrect.bind(undefined, "email1@yahoo.fr");//On cree un bnd pour appeller une fonction avec comme premier parametre par default une adresse email
+	async.map(["password","wrongPassword"], bindVerifConnectionInformation, function(err, result){
+		assert.equal(err, null, "Il y a un probleme dans le assert connexion");
+		assert.equal(result[0], true, "Il y a un probleme dans le assert connexion");
+		assert.equal(result[1], false, "Il y a un probleme dans le assert connexion");
+		assert.done();
+	});
+	
+}
+
 exports.gellAll = function assetGetAll(assert){
 	var allUsers = userService.getAllUsers(function(err, allUser){
 		assert.equal(err, null, "Il y a une erreur dans le getAllUser");
@@ -56,7 +69,7 @@ exports.delete = function assertSuppression(assert){
 	assert.expect(10);
 	userSavedArray.forEach(function(user){
 		userService.delete(user._id, function(err){
-			assert.equals(err, null, "La suppression n'a pas fonctionne correctement");
+			assert.equal(err, null, "La suppression n'a pas fonctionne correctement");
 			userSavedArray.pop();
 			if(userSavedArray.length ==0){
 				mongoose.connection.close();//On ferme la connection pour etre sur que nodeunit se ferme correctement

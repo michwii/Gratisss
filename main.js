@@ -1,9 +1,12 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var session = require('express-session');
-var userService = require(__dirname + '/services/users.js');
 var md5 = require('MD5');
+var qsync = require('async');
 var utils = require(__dirname + '/services/utils.js');
+var userService = require(__dirname + '/services/users.js');
+
+
 
 var app = express();
 
@@ -47,21 +50,25 @@ app.delete('/api/users/:id', function (req, res) {
 
 app.post('/api/users', function (req, res) {
 
+	res.setHeader('Content-Type', 'application/json');
+
 	var emailToSave = req.body.email;
 	var passwordToSave = req.body.password;
+	var loginToSave = req.body.login;
 	var session = req.session;
-	res.setHeader('Content-Type', 'application/json');
+	var returnedMessage = new Object();
 	
-	if(emailToSave != undefined && passwordToSave != undefined && utils.validateEmail(emailToSave)){
-		var userToCreate = {email: emailToSave, password: md5(passwordToSave)};
-		
+	if(emailToSave != undefined && passwordToSave != undefined && login != undefined && utils.validateEmail(emailToSave)){
+		var userToCreate = {email: emailToSave, password: md5(passwordToSave), login: loginToSave};
+
 		userService.verifyIfEmailAlreadyExist(emailToSave,function(err, result){
 			if(result){
-				var returnedMessage = new Object();
 				returnedMessage.sucess = "ko";
 				returnedMessage.message = "L'adresse email rensigne est deja utilise";
 				res.end(JSON.stringify(returnedMessage));
+				return;//Pas besoin d'aller plus loin
 			}else{
+				//On verifie maintenant que le login n'est pas deja present
 				userService.insertUser(userToCreate, function(err, result){
 					var returnedMessage = new Object();
 					returnedMessage.sucess = "ok";
@@ -70,13 +77,20 @@ app.post('/api/users', function (req, res) {
 					res.end(JSON.stringify(returnedMessage));
 				});
 			}
+			
+			res.end(JSON.stringify(returnedMessage));
 		});
+		/*async.series([
+			function(){
+				userService.verifyIfEmailAlreadyExist(emailToSave,function(err, result){
+			}
+		]);
+		*/
 
 	}else{//we then return an exception
-		var errorJustification = new Object();
-		errorJustification.success = "ko";
-		errorJustification.message = "Les parametres fournits en entree ne sont pas corrects ou imcomplets"
-		res.end(JSON.stringify(errorJustification));
+		returnedMessage.success = "ko";
+		returnedMessage.message = "Les parametres fournits en entree ne sont pas corrects ou imcomplets"
+		res.end(JSON.stringify(returnedMessage));
 	}	
 });
 
