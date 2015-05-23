@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<% include header %>
+<link rel="stylesheet" href="css/compiled/coming-soon.css" type="text/css" media="screen">
+</head>
+<body>
+    
+    <% include navBar %>
+
+    <!-- Coming soon 1 -->
+    <div id="coming_soon">
+        <div class="head">
+            <div class="container">
+                <div class="col-sm-6 text">
+                    <h4>Cette fonctionnalite arrive bientot</h4>
+                    <p>
+                        Nous travaillons activement pour rendre cette partie du site accessible. <span>Restez à l'affût!</span>
+                        <br />
+                        Pour nous suivre n'hesitez pas a regarder nos pages Facebook + Twitter ou de nous donner votre mail.</p>
+                </div>
+
+                <div class="col-sm-6 count" id="clock">
+                    <div class="pull-right">
+                        <!--  <div class="box">
+                            <div class="circle">
+                                <span id="weeks"></span>
+                            </div>
+                            <p>Weeks</p>
+                        </div> -->
+                        <div class="box last">
+                            <div class="circle">
+                                <span id="days"></span>
+                            </div>
+                            <p>Jours</p>
+                        </div>
+                        <div class="box">
+                            <div class="circle">
+                                <span id="hours"></span>
+                            </div>
+                            <p>Heures</p>
+                        </div>
+                        <div class="box">
+                            <div class="circle">
+                                <span id="minutes"></span>
+                            </div>
+                            <p>Minutes</p>
+                        </div>
+                        <div class="box">
+                            <div class="circle">
+                                <span id="seconds"></span>
+                            </div>
+                            <p>Secondes</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="email_wrapp">
+            <div class="container">
+                <div class="col-md-11 wrapp">
+                    <p><strong>Enregistrez vous!</strong> Pour faire partie des premiers</p>
+                    <input type="text" placeholder="Email address..." class="form-control">
+                    <a href="#" class="btn send">ok</a>
+                </div>
+            </div>
+        </div>
+
+	<% include footer %>
+
+    <script src="js/jquery.countdown.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var currentDate = new Date(),
+            finished = false,
+            availiableExamples = {
+                set35daysFromNow: 35 * 24 * 60 * 60 * 1000,
+                set5minFromNow  : 5 * 60 * 1000,
+                set1minFromNow  : 1 * 60 * 1000
+            };
+      
+            function callback(event) {
+                $this = $(this);
+                $this.find('span#'+event.type).html(event.value);
+                switch(event.type) {
+                    case "seconds":
+                    case "minutes":
+                    case "hours":
+                    case "days":
+                    case "weeks":
+                    case "daysLeft":
+                    case "finished":
+                }
+            }
+      
+            $('div#clock').countdown(availiableExamples.set35daysFromNow + currentDate.valueOf(), callback);
+        });
+    </script>
+	
+	
+
+</body>
+</html>
