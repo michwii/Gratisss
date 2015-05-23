@@ -4,6 +4,7 @@ var session = require('express-session');
 var md5 = require('MD5');
 var async = require('async');
 var usersRoutes = require(__dirname + '/routes/usersRoutes');
+var codesReductionRoutes = require(__dirname + '/routes/codesReductionRoutes');
 var utils = require(__dirname + '/services/utils.js');
 var userService = require(__dirname + '/services/users.js');
 
@@ -21,7 +22,7 @@ app.use(session({
 }))
 
 usersRoutes.initRoute(app);
-
+codesReductionRoutes.initRoute(app);
 
 app.get('/', function (req, res) {
 	var session = req.session;

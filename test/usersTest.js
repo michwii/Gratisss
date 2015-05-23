@@ -77,10 +77,16 @@ exports.connexion = function assertConnexion(assert){
 }
 
 exports.gellAll = function assetGetAll(assert){
-	var allUsers = userService.getAllUsers(function(err, allUser){
-		assert.equal(err, null, "Il y a une erreur dans le getAllUser");
+	
+	var arrayOfSearchFunctionBinded = new Array();
+	for(var i = 0; i < 10; i++){
+		var bindedFunctionToTest = userService.getOneUser.bind(undefined, userSavedArray[i]);
+		arrayOfSearchFunctionBinded.push(bindedFunctionToTest);
+	}
+	
+	async.series(arrayOfSearchFunctionBinded, function(err, result){
 		for(var i = 0; i < 10; i++){
-			assert.equal(userSavedArray[i]._id, allUser[allUser.length - (10-i)]._id,"le getall n'a pas retourne 10 utilisateurs");
+			assert.equal(userSavedArray[i]._id, result[i]._id,"le getall n'a pas retourne 10 utilisateurs");
 		}
 		assert.done();
 	});
