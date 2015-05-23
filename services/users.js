@@ -7,7 +7,10 @@ var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 
 
-var connection = mongoose.connect(urlDatabase);
+var connection = mongoose.connection;
+if(!connection.readyState){
+	connection = mongoose.connect(urlDatabase);
+}
 autoIncrement.initialize(connection);
 
 var UsersSchema = new Schema({

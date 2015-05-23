@@ -1,3 +1,6 @@
+var utils = require(__dirname + '/../services/utils.js');
+var userService = require(__dirname + '/../services/users.js');
+var md5 = require('MD5');
 
 
 exports.initRoute = function(app){
@@ -64,13 +67,11 @@ exports.initRoute = function(app){
 
 	app.post('/api/users/connexion', function (req, res) {
 		res.setHeader('Content-Type', 'application/json');
-
 		var email = req.body.email;
 		var password = req.body.password;
 		
 		userService.getOneUser({email: email, password:md5(password)}, function(err, result){
 			var returnedMessage = new Object();
-
 			if(err || result == null){
 				returnedMessage.success = "ko";
 				returnedMessage.message = "Le login ou le mot de passe sont incorrects"

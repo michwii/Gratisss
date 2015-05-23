@@ -1,13 +1,11 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var session = require('express-session');
-var md5 = require('MD5');
 var async = require('async');
 var usersRoutes = require(__dirname + '/routes/usersRoutes');
 var codesReductionRoutes = require(__dirname + '/routes/codesReductionRoutes');
 var utils = require(__dirname + '/services/utils.js');
 var userService = require(__dirname + '/services/users.js');
-
 
 
 var app = express();
@@ -33,6 +31,7 @@ app.get('/', function (req, res) {
 
 
 app.get('/points-de-fidelite', function (req, res) {
+	console.log("point de fidelite");
 	var session = req.session;
 	var userConnected = session.user;
 	res.render(__dirname + '/views/fidelite.ejs', {user: userConnected});

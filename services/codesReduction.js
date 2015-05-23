@@ -7,7 +7,10 @@ var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 
 
-var connection = mongoose.connect(urlDatabase);
+var connection = mongoose.connection;
+if(!connection.readyState){
+	connection = mongoose.connect(urlDatabase);
+}
 autoIncrement.initialize(connection);
 
 var CodesReductionSchema = new Schema({
@@ -24,7 +27,7 @@ CodesReductionSchema.plugin(autoIncrement.plugin, 'CodesReduction');
 exports.CodesReduction = CodesReduction;
 
 exports.getAllCodesReduction = function(searchCriterias, callback){
-	CodesReduction.find(parametersOfSearch, function(err, result){
+	CodesReduction.find(searchCriterias, function(err, result){
 		if(err != null){
 			callback(err, null);
 		}
@@ -32,7 +35,19 @@ exports.getAllCodesReduction = function(searchCriterias, callback){
 	});
 };
 
-
+exports.insertCodeReduction = function(codeToInsert, callback){
+	var codeReduction = new CodesReduction();
+	codeReduction.name = codeToInsert.name;
+	codeReduction.code = codeToInsert.code;
+	codeReduction.brand = codeToInsert.brand;
+	codeReduction.descritpion = codeToInsert.descritpion;
+	codeReduction.url = codeToInsert.url;
+	
+	codeReduction.save(function(err, result){
+		if(err) callback(err, null);
+		callback(err, result);
+	});
+};
 /*
 
 exports.insertUser = function (user, callback){
