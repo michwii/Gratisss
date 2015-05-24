@@ -15,11 +15,11 @@ autoIncrement.initialize(connection);
 
 var CodesReductionSchema = new Schema({
 	id			: 	ObjectId,
-    name   		: 	String,
 	code   		: 	String,
 	brand		: 	String,
 	descritpion	:	String,
-	url			:	String
+	url			:	String,
+	urlLogo		:	String
 });
 var CodesReduction = mongoose.model('CodesReduction', CodesReductionSchema);
 
@@ -37,17 +37,36 @@ exports.getAllCodesReduction = function(searchCriterias, callback){
 
 exports.insertCodeReduction = function(codeToInsert, callback){
 	var codeReduction = new CodesReduction();
-	codeReduction.name = codeToInsert.name;
 	codeReduction.code = codeToInsert.code;
 	codeReduction.brand = codeToInsert.brand;
 	codeReduction.descritpion = codeToInsert.descritpion;
 	codeReduction.url = codeToInsert.url;
+	codeReduction.urlLogo = codeToInsert.urlLogo;
+	codeReduction.validityStart = codeToInsert.validityStart;
+	codeReduction.validityEnd = codeToInsert.validityEnd;
 	
 	codeReduction.save(function(err, result){
 		if(err) callback(err, null);
 		callback(err, result);
 	});
 };
+
+exports.deleteCodeReduction = function(id, callback){
+	CodesReduction.remove({ _id: id }, function(err) {
+		callback(err);
+	});
+};
+
+exports.getOneCodeReduction = function(searchParameter, callback){
+	CodesReduction.find({ _id: searchParameter._id, brand: searchParameter.brand }, function(err, result) {
+		if(err){
+			callback(err, null);
+		}else{
+			callback(err, result);
+		}
+	});
+};
+
 /*
 
 exports.insertUser = function (user, callback){
