@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<% include header %>
+    <link rel="stylesheet" href="css/compiled/blog.css" type="text/css" media="screen" />
+</head>
+<body>
+   <% include navBar %>
+
+    <div id="blog">
+        <div class="container">
+            <div class="section_header">
+                <h3>Codes de reduction</h3>
+
+                <input type="text" class="search-query form-control" placeholder="Search">
+            </div>
+
+            <!-- Post Row -->
+            <div class="row post_row">
+                
+				<%	for(var i = 0; i < codesReduction.length; i++){ %>
+				<!-- Post -->
+                <div class="col-sm-4" style="height:570px">
+                    <div class="post" >
+                        <div class="img">
+                            <a href="<%= codesReduction[i].url%>" title="code de reduction <%= codesReduction[i].brand %>">
+                                <img src="<%= codesReduction[i].urlLogo %>" alt="code de reduction <%= codesReduction[i].brand %>" class="img-responsive" style="margin-left: auto;margin-right: auto;" />
+                            </a>
+                        </div>
+                        <div class="text">
+                            <h5 class="titleCodesReduction"><a href="<%= codesReduction[i].url%>" title="code de reduction <%= codesReduction[i].brand %>"><%= codesReduction[i].brand %></a></h5>
+                            <span class="date"><%= codesReduction[i].code %></span>
+                            <p>
+								<%= codesReduction[i].description.substr(0, 350); %>
+							</p>
+                        </div>
+                        <div class="author_box">
+                            <p><strong>Debut de validite : </strong><%= codesReduction[i].validityStart %></p>
+                            <p><strong>Fin de validite : </strong><%= codesReduction[i].validityEnd %></p>
+                        </div>
+                    </div>
+                </div>
+				<%}%>
+				
+        </div>
+    </div>
+	
+	<% include footer %>
+</body>
+</html>

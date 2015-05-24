@@ -89,7 +89,7 @@ exports.initRoute = function(app){
 		var session = req.session;
 		var userConnected = session.user;
 
-		res.render(__dirname + '/../views/inscription.ejs', {user: userConnected});
+		res.render(__dirname + '/../views/inscription.ejs', {user: userConnected, codesReduction: codesReduction});
 	});
 
 	app.get('/connexion', function (req, res) {

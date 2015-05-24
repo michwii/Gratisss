@@ -63,4 +63,12 @@ exports.initRoute = function(app){
 			}
 		});
 	});
+	
+	app.get('/codes-de-reduction', function(req, res){
+		var session = req.session;
+		var userConnected = session.user;
+		codesReductionService.getAllCodesReduction(null, function(err, result){
+			res.render(__dirname + '/../views/codesReduction.ejs', {user: userConnected, codesReduction: result});
+		});
+	});
 };

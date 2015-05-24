@@ -43,12 +43,6 @@ app.get('/echantillons-gratuits', function (req, res) {
 	res.render(__dirname + '/views/coming-soon.ejs', {user: userConnected});
 });
 
-app.get('/codes-de-reduction', function (req, res) {
-	var session = req.session;
-	var userConnected = session.user;
-	res.render(__dirname + '/views/coming-soon.ejs', {user: userConnected});
-});
-
 app.get('/bons-de-reduction', function (req, res) {
 	var session = req.session;
 	var userConnected = session.user;
