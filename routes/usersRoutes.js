@@ -1,6 +1,7 @@
 var utils = require(__dirname + '/../services/utils.js');
 var userService = require(__dirname + '/../services/users.js');
 var md5 = require('MD5');
+var async = require('async');
 
 
 exports.initRoute = function(app){
