@@ -10,14 +10,13 @@ exports.initRoute = function(app){
 		});
 	});
 	
-	app.get('/api/codes-de-reduction/:brand/:id', function(req, res){
+	app.get('/api/codes-de-reduction/:id', function(req, res){
 		res.setHeader('Content-Type', 'application/json');
 		var id = req.params.id;		
-		var brand = utils.transformUrlInBrandName(req.params.brand);
-		codesReductionService.getOneCodeReduction({_id:id, brand: brand}, function(err, result){
+		codesReductionService.getOneCodeReduction({_id:id}, function(err, result){
 			if(err){
 				res.statusCode = 501;
-				res.end(JSON.stringify({success: "ko", message:"Le code de reduction n'a pas pu etre enregistre"}));
+				res.end(JSON.stringify({success: "ko", message:"Le code de reduction n'a pas pu etre recupere"}));
 			}else if(result.length == 0){
 				res.statusCode = 404;
 				res.end(JSON.stringify({success: "ko", message:"Le code de reduction demande n'existe pas"}));

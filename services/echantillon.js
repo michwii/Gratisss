@@ -7,42 +7,78 @@ var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 
 
-var connection = mongoose.connect(urlDatabase);
-autoIncrement.initialize(mongoose.connection);
+var connection = mongoose.connection;
+if(!connection.readyState){
+	connection = mongoose.connect(urlDatabase);
+}
+autoIncrement.initialize(connection);
 
-var UsersSchema = new Schema({
-	id			: ObjectId,
-    email   	: String,
-	password   	: String,
-	name    	: String,
-	surname		: String
+var EchantillonsSchema = new Schema({
+	id				: 		ObjectId,
+    title   		: 		String,
+	urlImage   		: 		String,
+	description 	: 		String,
+	url				: 		String,
+	source			: 		String,
+	author			: 		String,
+	valid			:		Boolean
 });
-var Users = mongoose.model('Users', UsersSchema);
+var Echantillons = mongoose.model('Echantillons', EchantillonsSchema);
 
-UsersSchema.plugin(autoIncrement.plugin, 'Users');
+EchantillonsSchema.plugin(autoIncrement.plugin, 'Echantillons');
   
-exports.insertUser = function (user, callback){
-	var userToInsert = new Users();
-	userToInsert.email= user.email;
-	userToInsert.password = user.password;
+exports.insertEchantillon = function (echantillon, callback){
+	var echantillonToInsert = new Echantillons(echantillon);
 	
-	userToInsert.save(function (err, userInserted) {
+	echantillonToInsert.save(function (err, echantillonInserted) {
 		if(err){
-			console.log("Erreur lors de l'insertion d'un user");
+			console.log("Erreur lors de l'insertion d'un echantillon");
 			callback(err, null);
 		}
-		callback(err, userInserted);
+		callback(err, echantillonInserted);
 	});
 } 
 
-exports.getAllUsers = function (parametersOfSearch, callback){
-	Users.find(parametersOfSearch, function (err, docs) {
+exports.getOneEchantillon = function (parametersOfSearch, callback){
+	Echantillons.findOne(parametersOfSearch, function (err, echantillon) {
 		if(err){
-			console.log("Erreur lors de la recherche d'un user");
+			console.log("Erreur lors de la recherche d'un echantillon");
 			callback(err, null);
 		}
-		callback(err, docs);
+		callback(err, echantillon);
 	});
 } 
 
+exports.modifyEchantillon = function(id, newValues, callback){
+	Echantillons.update({_id : id}, newValues, null, function(err, result){
+		if(err){
+			callback(err, null);
+		}
+		callback(err, result);
+	});
+};
+
+exports.getAllEchantillons = function (parametersOfSearch, callback){
+	Echantillons.find(parametersOfSearch, function (err, echantillon) {
+		if(err){
+			console.log("Erreur lors de la recherche d'un echantillon");
+			callback(err, null);
+		}
+		callback(err, echantillon);
+	});
+} 
+
+exports.alreadyExist = function(parametersOfSearch, callback){
+	Echantillons.findOne(parametersOfSearch, function (err, echantillon) {
+		if(err){
+			console.log("Erreur lors de la recherche d'un echantillon");
+			callback(err, null);
+		}
+		if(echantillon == null){
+			callback(err, false);
+		}else{
+			callback(err, true);
+		}
+	});
+}
 

@@ -60,7 +60,7 @@ exports.deleteCodeReduction = function(id, callback){
 };
 
 exports.getOneCodeReduction = function(searchParameter, callback){
-	CodesReduction.find({ _id: searchParameter._id, brand: searchParameter.brand }, function(err, result) {
+	CodesReduction.find(searchParameter, function(err, result) {
 		if(err){
 			callback(err, null);
 		}else{

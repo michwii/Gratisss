@@ -42,11 +42,9 @@ exports.getAllCodesReductionAndTestThem = function(test){
 		var arrayOfRequestGetBinded = new Array();
 		var parsedResponse = JSON.parse(body).codesReduction;
 		for(var i = 0; i< parsedResponse.length; i++){
-			var brand = utils.transformBrandNameInUrl(parsedResponse[i].brand);
 			var id = parsedResponse[i]._id;
 			test.notEqual(id, undefined, "Erreur dans le getAll. ID = undefined");
-			test.notEqual(brand, undefined, "Erreur dans le getAll brand = undefined");
-			var requestGetBinded = request.get.bind(undefined, "http://localhost/api/codes-de-reduction/"+brand+"/"+id);
+			var requestGetBinded = request.get.bind(undefined, "http://localhost/api/codes-de-reduction/"+id);
 			arrayOfRequestGetBinded.push(requestGetBinded);
 		}
 
@@ -54,7 +52,7 @@ exports.getAllCodesReductionAndTestThem = function(test){
 			test.equal(err, null, "Erreur dans le getAll");
 			for(var i = 0; i< result.length; i++){
 				var responseParsed = JSON.parse(result[i][0].body);
-				test.equal(responseParsed.success, "ok","Erreur dans le getAll. Le success n'est pas egal a ok ");
+				test.equal(responseParsed.success, "ok","Erreur dans le getAll GetAllCodesReduction. Le success n'est pas egal a ok ");
 			}
 			test.done();
 		});
