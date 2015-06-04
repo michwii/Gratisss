@@ -4,8 +4,7 @@ sudo apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10
 echo "deb http://repo.mongodb.org/apt/debian "$(lsb_release -sc)"/mongodb-org/3.0 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.0.list
 sudo apt-get update
 sudo apt-get install -y mongodb-org
-#On lance la database
-sudo service mongod start
+
 #FIN -- On commence par installer la database MongoDB
 #On install NodeJS
 sudo apt-get install curl
@@ -21,6 +20,8 @@ git clone https://github.com/michwii/UnJourUnEchantillon
 #FIN -- On va chercher les sources du projet
 #On installe les dependances npm du projet
 cd UnJourUnEchantillon
+mkdir data
+sudo service mongod start --dbpath ./data
 sudo npm install --unsafe-perm
 #Le unsafe-perm est important car sinon il essayera d'installer des dependances sans etre root et ca ne marchera pas.
 sudo npm install forever -g
