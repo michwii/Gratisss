@@ -12,7 +12,13 @@ exports.initRoute = function(app){
 	app.get('/echantillons-gratuits/:title/:id', function (req, res) {
 		var session = req.session;
 		var userConnected = session.user;
-		res.render(__dirname + '/../views/echantillon.ejs', {user: userConnected});
+		
+		var id = req.params.id;
+		
+		echantillonService.getOneEchantillon({_id:id}, function(err, result){
+			res.render(__dirname + '/../views/echantillon.ejs', {user: userConnected, echantillon: result});		
+		});
+		
 	});
 
 	app.get('/api/echantillons-gratuits', function (req, res) {
