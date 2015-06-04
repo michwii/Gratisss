@@ -39,17 +39,17 @@
             <div class="collapse navbar-collapse navbar-ex1-collapse" role="navigation">
                 <ul class="nav navbar-nav navbar-right">
                     <li class="active"><a href="/">HOME</a></li>
-					<li><a href="echantillons-gratuits">Echantillons gratuits</a></li>
-                    <li><a href="bons-de-reduction">Bons de reduction</a></li>
-                    <li><a href="codes-de-reduction">Codes de reduction</a></li>
-					<li><a href="points-de-fidelite">Mes points</a></li>
+					<li><a href="/echantillons-gratuits">Echantillons gratuits</a></li>
+                    <li><a href="/bons-de-reduction">Bons de reduction</a></li>
+                    <li><a href="/codes-de-reduction">Codes de reduction</a></li>
+					<li><a href="/points-de-fidelite">Mes points</a></li>
 					<%
 						if(user){%>
-					<li><a href="users/<%=user._id %>"><%= user.login %></a></li>
-                    <li><a href="deconnexion">Se deconnecter</a></li>
+					<li><a href="/users/<%=user._id %>"><%= user.login %></a></li>
+                    <li><a href="/deconnexion">Se deconnecter</a></li>
 					<%		}else{%>
-					<li><a href="inscription">S'inscrire</a></li>
-                    <li><a href="connexion">Se connecter</a></li>
+					<li><a href="/inscription">S'inscrire</a></li>
+                    <li><a href="/connexion">Se connecter</a></li>
 					<%	}
 					%>
                 </ul>

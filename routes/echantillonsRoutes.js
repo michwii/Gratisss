@@ -8,6 +8,12 @@ exports.initRoute = function(app){
 		var userConnected = session.user;
 		res.render(__dirname + '/../views/coming-soon.ejs', {user: userConnected});
 	});
+	
+	app.get('/echantillons-gratuits/:title/:id', function (req, res) {
+		var session = req.session;
+		var userConnected = session.user;
+		res.render(__dirname + '/../views/echantillon.ejs', {user: userConnected});
+	});
 
 	app.get('/api/echantillons-gratuits', function (req, res) {
 		res.setHeader('Content-Type', 'application/json');
@@ -77,9 +83,6 @@ exports.initRoute = function(app){
 		echantillonService.insertEchantillon(echantillonToInsert, function(err, result){
 			res.end(JSON.stringify({success: "ok", echantillon: result}));
 		});
-
-		
-		res.end(JSON.stringify({success: "ok", echantillon: echantillonToInsert}));
 		
 	});
 	
