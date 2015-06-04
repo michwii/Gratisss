@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<% include header %>
+    <link rel="stylesheet" href="/css/compiled/blog.css" type="text/css" media="screen" />
+</head>
+<body>
+   <% include navBar %>
+
+    <div id="blog">
+        <div class="container">
+            <div class="section_header">
+                <h3>Echantillons Gratuits</h3>
+
+                <input type="text" class="search-query form-control" placeholder="Search" />
+            </div>
+
+            <!-- Post Row -->
+            <div class="row post_row">
+                
+				<%	for(var i = 0; i < echantillons.length; i++){ %>
+				<!-- Post -->
+                <div class="col-sm-4" style="height:570px">
+                    <div class="post" >
+                        <div class="img">
+                            <a href="<%- "/echantillons-gratuits/"+ echantillons[i].title +"/" + echantillons[i]._id%>" title="<%- echantillons[i].title %>">
+                                <img src="<%- echantillons[i].urlImage %>" alt="<%- echantillons[i].title %>" class="img-responsive" style="margin-left: auto;margin-right: auto;" />
+                            </a>
+                        </div>
+                        <div class="text">
+                            <h5 class="titleEchantillons"><a href="<%- "/echantillons-gratuits/"+ echantillons[i].title +"/" + echantillons[i]._id%>" title="<%= echantillons[i].title %>"><%= echantillons[i].title %></a></h5>
+                            <span class="date">Wed 25 Oct,</span>
+                            <p style="height : 100px; overflow:hidden; padding-top:0px;">
+								<%- echantillons[i].description.substring(0, 200) %>
+							</p>
+                        </div>
+                        <div class="author_box">
+                            <p><strong>Debut de validite : </strong><%= echantillons[i].validityStart %></p>
+                            <p><strong>Fin de validite : </strong><%= echantillons[i].validityEnd %></p>
+                        </div>
+                    </div>
+                </div>
+				<%}%>
+				
+        </div>
+    </div>
+	
+	<% include footer %>
+</body>
+</html>

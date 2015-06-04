@@ -2,7 +2,7 @@
 <html>
 <head>
 	<% include header %>
-    <link rel="stylesheet" href="css/compiled/blog.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="/css/compiled/blog.css" type="text/css" media="screen" />
 </head>
 <body>
    <% include navBar %>
@@ -12,7 +12,7 @@
             <div class="section_header">
                 <h3>Codes de reduction</h3>
 
-                <input type="text" class="search-query form-control" placeholder="Search">
+                <input type="text" class="search-query form-control" placeholder="Search" />
             </div>
 
             <!-- Post Row -->
@@ -28,7 +28,7 @@
                             </a>
                         </div>
                         <div class="text">
-                            <h5 class="titleCodesReduction"><a href="<%= codesReduction[i].url%>" title="code de reduction <%= codesReduction[i].brand %>"><%= codesReduction[i].brand %></a></h5>
+                            <h5><a href="<%= codesReduction[i].url%>" title="code de reduction <%= codesReduction[i].brand %>"><%= codesReduction[i].brand %></a></h5>
                             <span class="date"><%= codesReduction[i].code %></span>
                             <p>
 								<%= codesReduction[i].description.substr(0, 350); %>

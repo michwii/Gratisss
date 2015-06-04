@@ -6,7 +6,10 @@ exports.initRoute = function(app){
 	app.get('/echantillons-gratuits', function (req, res) {
 		var session = req.session;
 		var userConnected = session.user;
-		res.render(__dirname + '/../views/coming-soon.ejs', {user: userConnected});
+		
+		echantillonService.getAllEchantillons({validated : true}, function(err, result){
+			res.render(__dirname + '/../views/echantillons-gratuits.ejs', {user: userConnected, echantillons : result});
+		});
 	});
 	
 	app.get('/echantillons-gratuits/:title/:id', function (req, res) {
@@ -70,6 +73,16 @@ exports.initRoute = function(app){
 				res.end(JSON.stringify(messageToReturn));
 			}
 		});
+	});
+	
+	app.delete('/api/echantillons-gratuits/:id', function (req, res) {
+		res.setHeader('Content-Type', 'application/json');
+
+		var id = req.params.id;
+		echantillonService.deleteEchantillon({_id: id}, function(err, result){
+			res.end(JSON.stringify({success: "ok", echantillon: result}));
+		});
+		
 	});
 	
 	app.get('/api/echantillons-gratuits/:id', function (req, res) {

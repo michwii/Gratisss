@@ -21,7 +21,7 @@ var EchantillonsSchema = new Schema({
 	url				: 		String,
 	source			: 		String,
 	author			: 		String,
-	valid			:		Boolean
+	validated		:		Boolean
 });
 var Echantillons = mongoose.model('Echantillons', EchantillonsSchema);
 
@@ -34,8 +34,9 @@ exports.insertEchantillon = function (echantillon, callback){
 		if(err){
 			console.log("Erreur lors de l'insertion d'un echantillon");
 			callback(err, null);
+		}else{
+			callback(err, echantillonInserted);
 		}
-		callback(err, echantillonInserted);
 	});
 } 
 
@@ -44,13 +45,24 @@ exports.getOneEchantillon = function (parametersOfSearch, callback){
 		if(err){
 			console.log("Erreur lors de la recherche d'un echantillon");
 			callback(err, null);
+		}else{
+			callback(err, echantillon);
 		}
-		callback(err, echantillon);
 	});
 } 
 
 exports.modifyEchantillon = function(id, newValues, callback){
 	Echantillons.update({_id : id}, newValues, null, function(err, result){
+		if(err){
+			callback(err, null);
+		}else{
+			callback(err, result);
+		}
+	});
+};
+
+exports.deleteEchantillon = function(id, callback){
+	Echantillons.remove({_id : id}, function(err, result){
 		if(err){
 			callback(err, null);
 		}
@@ -63,8 +75,10 @@ exports.getAllEchantillons = function (parametersOfSearch, callback){
 		if(err){
 			console.log("Erreur lors de la recherche d'un echantillon");
 			callback(err, null);
+		}else{
+			callback(err, echantillon);
 		}
-		callback(err, echantillon);
+		
 	});
 } 
 
@@ -73,12 +87,14 @@ exports.alreadyExist = function(parametersOfSearch, callback){
 		if(err){
 			console.log("Erreur lors de la recherche d'un echantillon");
 			callback(err, null);
-		}
-		if(echantillon == null){
-			callback(err, false);
 		}else{
-			callback(err, true);
+			if(echantillon == null){
+				callback(err, false);
+			}else{
+				callback(err, true);
+			}
 		}
+		
 	});
 }
 
