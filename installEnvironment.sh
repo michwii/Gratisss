@@ -16,12 +16,12 @@ sudo apt-get install -y build-essential
 sudo apt-get install -y git
 #FIN -- On install Git
 #On va chercher les sources du projet
-git clone https://github.com/michwii/UnJourUnEchantillon
+git clone https://github.com/michwii/Gratisss
 #FIN -- On va chercher les sources du projet
 #On installe les dependances npm du projet
 cd UnJourUnEchantillon
 mkdir data
-sudo service mongod start --dbpath ./data
+sudo service mongod start --dbpath "./data"
 sudo npm install --unsafe-perm
 #Le unsafe-perm est important car sinon il essayera d'installer des dependances sans etre root et ca ne marchera pas.
 sudo npm install forever -g
