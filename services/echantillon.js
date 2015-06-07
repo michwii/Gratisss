@@ -21,11 +21,14 @@ var EchantillonsSchema = new Schema({
 	url				: 		String,
 	source			: 		String,
 	author			: 		String,
-	validated		:		Boolean
+	validated		:		Boolean,
+	daySelection	:		Boolean,
+	insertedOn		:		{ type: Date, default: Date.now }
 });
 var Echantillons = mongoose.model('Echantillons', EchantillonsSchema);
 
 EchantillonsSchema.plugin(autoIncrement.plugin, 'Echantillons');
+
   
 exports.insertEchantillon = function (echantillon, callback){
 	var echantillonToInsert = new Echantillons(echantillon);
@@ -56,6 +59,9 @@ exports.modifyEchantillon = function(id, newValues, callback){
 		if(err){
 			callback(err, null);
 		}else{
+			if(newValues.daySelection){
+				exports.makeEchantillonDailySelection(id, function(){});
+			}
 			callback(err, result);
 		}
 	});
@@ -98,3 +104,17 @@ exports.alreadyExist = function(parametersOfSearch, callback){
 	});
 }
 
+exports.makeEchantillonDailySelection = function(echantillonID, callback){
+
+	Echantillons.update(null, { $set: { daySelection: false }}, { multi: true }, function(err, numAffected){
+		if(err){
+			console.log(err);
+			callback(err, null);
+		}else{
+			Echantillons.update({_id:echantillonID}, { $set: { daySelection: true }}, { multi: false }, function(err, numAffected){
+				callback(err, numAffected);
+			});
+		}
+	});
+
+};

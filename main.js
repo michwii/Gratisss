@@ -8,6 +8,8 @@ var echantillonsRoutes = require(__dirname + '/routes/echantillonsRoutes');
 var codesReductionRoutes = require(__dirname + '/routes/codesReductionRoutes');
 var utils = require(__dirname + '/services/utils.js');
 var userService = require(__dirname + '/services/users.js');
+var echantillonService = require(__dirname + '/services/echantillon.js');
+
 
 
 var app = express();
@@ -29,7 +31,10 @@ codesReductionRoutes.initRoute(app);
 app.get('/', function (req, res) {
 	var session = req.session;
 	var userConnected = session.user;
-	res.render(__dirname + '/views/index.ejs', {user: userConnected});
+	echantillonService.getOneEchantillon({daySelection: true}, function(err, result){
+		console.log(result);
+		res.render(__dirname + '/views/index.ejs', {user: userConnected, echantillonSelected: result});
+	});
 });
 
 
