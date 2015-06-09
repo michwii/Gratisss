@@ -54,6 +54,20 @@ exports.initRoute = function(app){
 		
 	});
 	
+	app.get('/api/echantillons-gratuits/search/most-viewed', function (req, res) {
+		res.setHeader('Content-Type', 'application/json');
+		echantillonService.getMostViewedEchantillon(function(err, result){
+			res.end(JSON.stringify({success: "ok", echantillons: result}));
+		});
+	});
+	
+	app.get('/api/echantillons-gratuits/search/recent', function (req, res) {
+		res.setHeader('Content-Type', 'application/json');
+		echantillonService.getMostViewedEchantillon(function(err, result){
+			res.end(JSON.stringify({success: "ok", echantillons: result}));
+		});
+	});
+	
 	app.get('/api/echantillons-gratuits/search/:source', function(req, res){
 		res.setHeader('Content-Type', 'application/json');
 

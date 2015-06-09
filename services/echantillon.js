@@ -23,6 +23,8 @@ var EchantillonsSchema = new Schema({
 	author			: 		String,
 	validated		:		Boolean,
 	daySelection	:		Boolean,
+	category		:		String,
+	views			:		{ type: Number, default: 0 },
 	insertedOn		:		{ type: Date, default: Date.now }
 });
 var Echantillons = mongoose.model('Echantillons', EchantillonsSchema);
@@ -49,6 +51,8 @@ exports.getOneEchantillon = function (parametersOfSearch, callback){
 			console.log("Erreur lors de la recherche d'un echantillon");
 			callback(err, null);
 		}else{
+			echantillon.views++;
+			echantillon.save();
 			callback(err, echantillon);
 		}
 	});
@@ -77,7 +81,7 @@ exports.deleteEchantillon = function(id, callback){
 };
 
 exports.getAllEchantillons = function (parametersOfSearch, callback){
-	Echantillons.find(parametersOfSearch, function (err, echantillon) {
+	/*Echantillons.find(parametersOfSearch, function (err, echantillon) {
 		if(err){
 			console.log("Erreur lors de la recherche d'un echantillon");
 			callback(err, null);
@@ -86,6 +90,8 @@ exports.getAllEchantillons = function (parametersOfSearch, callback){
 		}
 		
 	});
+	*/
+	Echantillons.find(parametersOfSearch, callback);
 } 
 
 exports.alreadyExist = function(parametersOfSearch, callback){
@@ -102,6 +108,18 @@ exports.alreadyExist = function(parametersOfSearch, callback){
 		}
 		
 	});
+}
+
+exports.getMostViewedEchantillon = function(callback){
+	Echantillons.find().sort({views: 'desc'}).limit(3).exec(callback);
+}
+
+exports.getRelatedEchantillon = function(category, callback){
+
+}
+
+exports.getRecentEchantillon = function(callback){
+	
 }
 
 exports.makeEchantillonDailySelection = function(echantillonID, callback){
