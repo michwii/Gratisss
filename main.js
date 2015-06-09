@@ -32,7 +32,9 @@ app.get('/', function (req, res) {
 	var session = req.session;
 	var userConnected = session.user;
 	echantillonService.getOneEchantillon({daySelection: true}, function(err, result){
-		console.log(result);
+		if(result == null){
+			result = {};
+		}
 		res.render(__dirname + '/views/index.ejs', {user: userConnected, echantillonSelected: result});
 	});
 });
