@@ -29,7 +29,7 @@
                         </div>
                         <div class="text">
                             <h5 class="titleEchantillons"><a href="<%- "/echantillons-gratuits/"+ echantillons[i].title +"/" + echantillons[i]._id%>" title="<%= echantillons[i].title %>"><%= echantillons[i].title %></a></h5>
-                            <span class="date">Wed 25 Oct,</span>
+                            <span class="date"><%= echantillons[i].insertedOn.toLocaleDateString() %></span>
                             <p style="height : 100px; overflow:hidden; padding-top:0px;">
 								<%- echantillons[i].description.substring(0, 200) %>
 							</p>
