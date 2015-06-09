@@ -20,7 +20,7 @@ var EchantillonsSchema = new Schema({
 	description 	: 		String,
 	url				: 		String,
 	source			: 		String,
-	author			: 		String,
+	author			: 		{ type: String, default: "Gratisss" },
 	validated		:		Boolean,
 	daySelection	:		Boolean,
 	category		:		String,
@@ -81,16 +81,6 @@ exports.deleteEchantillon = function(id, callback){
 };
 
 exports.getAllEchantillons = function (parametersOfSearch, callback){
-	/*Echantillons.find(parametersOfSearch, function (err, echantillon) {
-		if(err){
-			console.log("Erreur lors de la recherche d'un echantillon");
-			callback(err, null);
-		}else{
-			callback(err, echantillon);
-		}
-		
-	});
-	*/
 	Echantillons.find(parametersOfSearch, callback);
 } 
 
@@ -110,16 +100,16 @@ exports.alreadyExist = function(parametersOfSearch, callback){
 	});
 }
 
-exports.getMostViewedEchantillon = function(callback){
-	Echantillons.find().sort({views: 'desc'}).limit(3).exec(callback);
+exports.getMostViewedEchantillons = function(callback){
+	Echantillons.find({validated: true}).sort({views: 'desc'}).limit(3).exec(callback);
 }
 
-exports.getRelatedEchantillon = function(category, callback){
-
+exports.getRelatedEchantillons = function(category, callback){
+	Echantillons.find({category: category, validated: true}).limit(6).exec(callback);
 }
 
-exports.getRecentEchantillon = function(callback){
-	
+exports.getNewEchantillons = function(callback){
+	Echantillons.find({validated: true}).sort({insertedOn: 'desc'}).limit(3).exec(callback);
 }
 
 exports.makeEchantillonDailySelection = function(echantillonID, callback){

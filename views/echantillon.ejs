@@ -25,10 +25,9 @@
 
                     <div class="post_content">
                         <h2><%- echantillon.title %></h2>
-                        <span class="date">Wed, 12 Dec.</span>
+                        <span class="date"><%- echantillon.insertedOn.toLocaleDateString() %></span>
                         <p><%- echantillon.description %></p>
                         <div class="author_box">
-                            <div class="author"><%= echantillon.author %></div>
                             <div class="area"><%= echantillon.category %></div>
                         </div>
 						<a class="btn btn-primary" href="<%= echantillon.url %>" title="<%- echantillon.title %>">Je le veux</a>
@@ -44,31 +43,26 @@
 
                             <ul class="sidebar_menu">
                                 <ul>
-                                    <li>Insere le :</li>
-                                    <li>Date d'expiration :</li>
-                                    <li>Autheur : </li>
-                                    <li>Category : </li>
+                                    <li>Insere le : <strong><%= echantillon.insertedOn.toLocaleDateString() %></strong></li>
+                                    <li>Date d'expiration : <strong> </strong></li>
+                                    <li>Autheur : <strong><%= echantillon.author %></strong></li>
+                                    <li>Category : <strong><%= echantillon.category %></strong></li>
                                 </ul>
                             </ul>
                         </div>
-                        <!--
+                        
                         <div class="box box2">
                             <div class="sidebar_header">
                                 <h4>Echantillons recent :</h4>
                             </div>
-
-                            <div class="recent">
+							<% for(var i = 0; i < newEchantillons.length; i++){ %>
+							<div class="recent">
                                 <span>
-                                    <img src="/img/recent_photos.jpg" alt="">
+                                    <img src="<%= newEchantillons[i].urlImage %>" alt="">
                                 </span>
-                                <p>Description de l'echantillon recent.</p>
+                                <p><%- newEchantillons[i].title %></p>
                             </div>
-                            <div class="recent">
-                                <span>
-                                    <img src="/img/recent_photos.jpg" alt="">
-                                </span>
-                                <p>Description de l'echantillon recent.</p>
-                            </div>
+							<%}%>
                         </div>
 
                         <div class="box">
@@ -76,27 +70,13 @@
                                 <h4>Echantillons populaires</h4>
                             </div>
                             <ul class="recent_photos">
+								<%for(var i = 0; i < mostViewedEchantillons.length; i++){%>
                                 <li>
-                                    <a href="#"><img src="/img/recent_photos.jpg"></a></li>
-                                <li>
-                                    <a href="#"><img src="/img/recent_photos.jpg"></a></li>
-                                <li>
-                                    <a href="#"><img src="/img/recent_photos.jpg"></a></li>
-                                <li>
-                                    <a href="#"><img src="/img/recent_photos.jpg"></a></li>
-                                <li>
-                                    <a href="#"><img src="/img/recent_photos.jpg"></a></li>
-                                <li>
-                                    <a href="#"><img src="/img/recent_photos.jpg"></a></li>
-                                <li>
-                                    <a href="#"><img src="/img/recent_photos.jpg"></a></li>
-                                <li>
-                                    <a href="#"><img src="/img/recent_photos.jpg"></a></li>
-                                <li>
-                                    <a href="#"><img src="/img/recent_photos.jpg"></a></li>
+                                    <a href="<%- "/echantillons-gratuits/"+ mostViewedEchantillons[i].title +"/"+mostViewedEchantillons[i]._id %>"><img src="<%= mostViewedEchantillons[i].urlImage %>"></a>
+								</li>
+								<%}%>
                             </ul>
                         </div>
-						-->
                     </div>
                 </div>
             </div>

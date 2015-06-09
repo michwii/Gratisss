@@ -1,3 +1,4 @@
+var async = require("async");
 var echantillonService = require(__dirname + '/../services/echantillon');
 var utils = require(__dirname + '/../services/utils');
 
@@ -18,10 +19,14 @@ exports.initRoute = function(app){
 		
 		var id = req.params.id;
 		
-		echantillonService.getOneEchantillon({_id:id}, function(err, result){
-			res.render(__dirname + '/../views/echantillon.ejs', {user: userConnected, echantillon: result});		
+		async.parallel([
+			echantillonService.getOneEchantillon.bind(undefined, {_id:id}),
+			echantillonService.getMostViewedEchantillons,
+			echantillonService.getNewEchantillons
+		], function(err, result){
+			res.render(__dirname + '/../views/echantillon.ejs', {user: userConnected, echantillon: result[0], mostViewedEchantillons: result[1], newEchantillons: result[2] });				
 		});
-		
+				
 	});
 
 	app.get('/api/echantillons-gratuits', function (req, res) {
@@ -56,14 +61,24 @@ exports.initRoute = function(app){
 	
 	app.get('/api/echantillons-gratuits/search/most-viewed', function (req, res) {
 		res.setHeader('Content-Type', 'application/json');
-		echantillonService.getMostViewedEchantillon(function(err, result){
+		echantillonService.getMostViewedEchantillons(function(err, result){
 			res.end(JSON.stringify({success: "ok", echantillons: result}));
 		});
 	});
 	
-	app.get('/api/echantillons-gratuits/search/recent', function (req, res) {
+	app.get('/api/echantillons-gratuits/search/new', function (req, res) {
 		res.setHeader('Content-Type', 'application/json');
-		echantillonService.getMostViewedEchantillon(function(err, result){
+		echantillonService.getNewEchantillons(function(err, result){
+			res.end(JSON.stringify({success: "ok", echantillons: result}));
+		});
+	});
+	
+	app.get('/api/echantillons-gratuits/search/category/:category', function (req, res) {
+		res.setHeader('Content-Type', 'application/json');
+		
+		var category = req.params.category;
+		
+		echantillonService.getRelatedEchantillons(category, function(err, result){
 			res.end(JSON.stringify({success: "ok", echantillons: result}));
 		});
 	});
