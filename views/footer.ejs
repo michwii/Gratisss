@@ -15,7 +15,7 @@
                         <div class="date">
                             <%= mostViewedEchantillons[i].insertedOn.toLocaleDateString() %>
                         </div>
-                        <a href="blogpost.html" class="title">
+                        <a href="/echantillons-gratuits/<%- mostViewedEchantillons[i].title + "/" +mostViewedEchantillons[i]._id %>" class="title">
                             <%= mostViewedEchantillons[i].title %>
                         </a>
                     </div>
