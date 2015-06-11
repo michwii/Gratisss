@@ -58,7 +58,7 @@
 							<% for(var i = 0; i < newEchantillons.length; i++){ %>
 							<div class="recent">
                                 <span>
-                                    <img src="<%= newEchantillons[i].urlImage %>" alt="">
+                                    <a href="<%- "/echantillons-gratuits/"+ newEchantillons[i].title +"/"+newEchantillons[i]._id %>"><img src="<%= newEchantillons[i].urlImage %>" alt=""></a>
                                 </span>
                                 <p><%- newEchantillons[i].title %></p>
                             </div>
