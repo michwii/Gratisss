@@ -2,7 +2,7 @@ var utils = require(__dirname + '/../services/utils.js');
 var userService = require(__dirname + '/../services/users.js');
 var md5 = require('MD5');
 var async = require('async');
-
+var echantillonService = require(__dirname + '/../services/echantillon.js');
 
 exports.initRoute = function(app){
 	app.get('/api/users', function (req, res) {
@@ -89,15 +89,15 @@ exports.initRoute = function(app){
 	app.get('/inscription', function (req, res) {
 		var session = req.session;
 		var userConnected = session.user;
-
-		res.render(__dirname + '/../views/inscription.ejs', {user: userConnected});
+		console.log(req.mostViewedEchantillons);
+		res.render(__dirname + '/../views/inscription.ejs', {user: userConnected, mostViewedEchantillons: req.mostViewedEchantillons});
 	});
 
 	app.get('/connexion', function (req, res) {
 		var session = req.session;
 		var userConnected = session.user;
 
-		res.render(__dirname + '/../views/connexion.ejs', {user: userConnected});
+		res.render(__dirname + '/../views/connexion.ejs', {user: userConnected, mostViewedEchantillons: req.mostViewedEchantillons});
 	});
 
 	app.get('/deconnexion', function (req, res) {

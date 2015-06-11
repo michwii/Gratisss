@@ -67,7 +67,7 @@ exports.initRoute = function(app){
 		var session = req.session;
 		var userConnected = session.user;
 		codesReductionService.getAllCodesReduction(null, function(err, result){
-			res.render(__dirname + '/../views/codesReduction.ejs', {user: userConnected, codesReduction: result});
+			res.render(__dirname + '/../views/codesReduction.ejs', {user: userConnected, codesReduction: result, mostViewedEchantillons: req.mostViewedEchantillons});
 		});
 	});
 };

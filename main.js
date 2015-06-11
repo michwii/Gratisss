@@ -10,8 +10,6 @@ var utils = require(__dirname + '/services/utils.js');
 var userService = require(__dirname + '/services/users.js');
 var echantillonService = require(__dirname + '/services/echantillon.js');
 
-
-
 var app = express();
 
 app.use(cors());
@@ -23,6 +21,13 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }));
+app.use(function (req, res, next) {
+	echantillonService.getMostViewedEchantillons(function(err, result){
+		req.mostViewedEchantillons = result;
+		next();
+	});
+});
+
 
 usersRoutes.initRoute(app);
 echantillonsRoutes.initRoute(app);
@@ -39,19 +44,17 @@ app.get('/', function (req, res) {
 	});
 });
 
-
-
 app.get('/points-de-fidelite', function (req, res) {
 	console.log("point de fidelite");
 	var session = req.session;
 	var userConnected = session.user;
-	res.render(__dirname + '/views/fidelite.ejs', {user: userConnected});
+	res.render(__dirname + '/views/fidelite.ejs', {user: userConnected, mostViewedEchantillons: req.mostViewedEchantillons});
 });
 
 app.get('/bons-de-reduction', function (req, res) {
 	var session = req.session;
 	var userConnected = session.user;
-	res.render(__dirname + '/views/coming-soon.ejs', {user: userConnected});
+	res.render(__dirname + '/views/coming-soon.ejs', {user: userConnected, mostViewedEchantillons: req.mostViewedEchantillons});
 });
 
 

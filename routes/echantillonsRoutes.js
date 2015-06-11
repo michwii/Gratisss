@@ -9,8 +9,9 @@ exports.initRoute = function(app){
 		var userConnected = session.user;
 		
 		echantillonService.getAllEchantillons({validated : true}, function(err, result){
-			res.render(__dirname + '/../views/echantillons-gratuits.ejs', {user: userConnected, echantillons : result});
+			res.render(__dirname + '/../views/echantillons-gratuits.ejs', {user: userConnected, echantillons: result, mostViewedEchantillons: req.mostViewedEchantillons });				
 		});
+		
 	});
 	
 	app.get('/echantillons-gratuits/:title/:id', function (req, res) {
@@ -21,10 +22,9 @@ exports.initRoute = function(app){
 		
 		async.parallel([
 			echantillonService.getOneEchantillon.bind(undefined, {_id:id}),
-			echantillonService.getMostViewedEchantillons,
 			echantillonService.getNewEchantillons
 		], function(err, result){
-			res.render(__dirname + '/../views/echantillon.ejs', {user: userConnected, echantillon: result[0], mostViewedEchantillons: result[1], newEchantillons: result[2] });				
+			res.render(__dirname + '/../views/echantillon.ejs', {user: userConnected, echantillon: result[0], mostViewedEchantillons:req.mostViewedEchantillons, newEchantillons: result[1] });				
 		});
 				
 	});
@@ -61,9 +61,9 @@ exports.initRoute = function(app){
 	
 	app.get('/api/echantillons-gratuits/search/most-viewed', function (req, res) {
 		res.setHeader('Content-Type', 'application/json');
-		echantillonService.getMostViewedEchantillons(function(err, result){
-			res.end(JSON.stringify({success: "ok", echantillons: result}));
-		});
+		
+		res.end(JSON.stringify({success: "ok", echantillons: req.mostViewedEchantillons}));
+		
 	});
 	
 	app.get('/api/echantillons-gratuits/search/new', function (req, res) {

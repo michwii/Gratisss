@@ -6,44 +6,36 @@
                     <h3 class="footer_header">
                         Recent Posts
                     </h3>
-                    <div class="post">
-                        <a href="blogpost.html">
-                            <img src="/img/recent_post1.png" class="img-circle" />
+                    
+                    <%for(var i = 0; i < 2; i++){%>
+					<div class="post recent">
+                        <a href="/echantillons-gratuits/<%- mostViewedEchantillons[i].title + "/" +mostViewedEchantillons[i]._id %>">
+                            <img src="<%= mostViewedEchantillons[i].urlImage %>" class="img-circle" />
                         </a>
                         <div class="date">
-                            Wed, 12 Dec
+                            <%= mostViewedEchantillons[i].insertedOn.toLocaleDateString() %>
                         </div>
                         <a href="blogpost.html" class="title">
-                            Randomised words which don't look embarrasing hidden.
+                            <%= mostViewedEchantillons[i].title %>
                         </a>
                     </div>
-                    <div class="post">
-                        <a href="blogpost.html">
-                            <img src="/img/recent_post2.png" class="img-circle" />
-                        </a>
-                        <div class="date">
-                            Mon, 12 Dec
-                        </div>
-                        <a href="blogpost.html" class="title">
-                            Randomised words which don't look embarrasing hidden.
-                        </a>
-                    </div>
+					<%}%>
                 </div>
                 <div class="col-sm-4 testimonials">
                     <h3 class="footer_header">
-                        Testimonials
+                        Ce qu'ils disent de nous
                     </h3>
                     <div class="wrapper">
                         <div class="quote">
                             <span>"</span>
-                            There are many variations of passages of randomised words which don't look even slightly believable. You need to be sure there isn't anything embarrassing of text.
+                            Gratisss est un site genial ou l'on peut trouver pleins d'echantillons de grandes marques. J'aime beaucoup le faite que l'on puisse dire ce que l'on pense des echantillons recu en commentaire =D
                             <span></span>
                         </div>
                         <div class="author">
                             <img src="/img/user-display.png" />
-                            <div class="name">Alejandra Galvan Castillo</div>
+                            <div class="name">Alexandra Galvan</div>
                             <div class="info">
-                                Details Canvas
+                                Paris
                             </div>
                         </div>
                     </div>
@@ -53,10 +45,10 @@
                         Contact
                     </h3>
                     <form action="#" method="post">
-                        <input type="text" placeholder="Your name" />
-                        <input type="text" placeholder="Your email" />
+                        <input type="text" placeholder="Votre nom" />
+                        <input type="text" placeholder="Votre email" />
                         <textarea rows="3" placeholder="Message"></textarea>
-                        <input type="submit" value="Send" />
+                        <input type="submit" value="Envoyer" />
                     </form>
                 </div>
             </div>
@@ -64,7 +56,7 @@
                 <div class="col-md-12">
                     <div class="row social">
                         <div class="col-md-12">
-                            <a href="#" class="facebook">
+                            <a href="https://www.facebook.com/GratisssWebSite" class="facebook">
                                 <span class="socialicons ico1"></span>
                                 <span class="socialicons_h ico1h"></span>
                             </a>
@@ -76,27 +68,11 @@
                                 <span class="socialicons ico3"></span>
                                 <span class="socialicons_h ico3h"></span>
                             </a>
-                            <a href="#" class="flickr">
-                                <span class="socialicons ico4"></span>
-                                <span class="socialicons_h ico4h"></span>
-                            </a>
-                            <a href="#" class="pinterest">
-                                <span class="socialicons ico5"></span>
-                                <span class="socialicons_h ico5h"></span>
-                            </a>
-                            <a href="#" class="dribble">
-                                <span class="socialicons ico6"></span>
-                                <span class="socialicons_h ico6h"></span>
-                            </a>
-                            <a href="#" class="behance">
-                                <span class="socialicons ico7"></span>
-                                <span class="socialicons_h ico7h"></span>
-                            </a>
                         </div>
                     </div>
                     <div class="row copyright">
                         <div class="col-md-12">
-                            © 2013 Clean Canvas. All rights reserved. Theme by Detail Canvas.
+                            © 2015 Gratisss. All rights reserved. 
                         </div>
                     </div>
                 </div>            
