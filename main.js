@@ -40,7 +40,7 @@ app.get('/', function (req, res) {
 		if(result == null){
 			result = {};
 		}
-		res.render(__dirname + '/views/index.ejs', {user: userConnected, echantillonSelected: result});
+		res.render(__dirname + '/views/index.ejs', {user: userConnected, echantillonSelected: result, mostViewedEchantillons: req.mostViewedEchantillons});
 	});
 });
 
