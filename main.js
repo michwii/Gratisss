@@ -23,7 +23,12 @@ app.use(session({
 }));
 app.use(function (req, res, next) {
 	echantillonService.getMostViewedEchantillons(function(err, result){
+	
+		if(result == null){
+			result = {};
+		}
 		req.mostViewedEchantillons = result;
+	
 		next();
 	});
 });
@@ -37,6 +42,7 @@ app.get('/', function (req, res) {
 	var session = req.session;
 	var userConnected = session.user;
 	echantillonService.getOneEchantillon({daySelection: true}, function(err, result){
+		console.log(err);
 		if(result == null){
 			result = {};
 		}

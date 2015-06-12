@@ -51,8 +51,10 @@ exports.getOneEchantillon = function (parametersOfSearch, callback){
 			console.log("Erreur lors de la recherche d'un echantillon");
 			callback(err, null);
 		}else{
-			echantillon.views++;
-			echantillon.save();
+			if(echantillon != null){//Au cas ou la base de donnee est vide et qu'il n'y a pas d'echantillon
+				echantillon.views++;
+				echantillon.save();
+			}
 			callback(err, echantillon);
 		}
 	});

@@ -7,7 +7,7 @@
                         Recent Posts
                     </h3>
                     
-                    <%for(var i = 0; i < 2; i++){%>
+                    <%for(var i = 0; i < mostViewedEchantillons.length - 2; i++){%>
 					<div class="post recent">
                         <a href="/echantillons-gratuits/<%- mostViewedEchantillons[i].title + "/" +mostViewedEchantillons[i]._id %>">
                             <img src="<%= mostViewedEchantillons[i].urlImage %>" class="img-circle" />
