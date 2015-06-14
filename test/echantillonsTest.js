@@ -45,6 +45,43 @@ exports.insertEchantillons = function(test){
 	});
 };
 
+exports.getEchantillonsThatHaveBeenInserted = function(test){
+	arrayOfBindGetRequest = new Array();
+	for(var i = 0; i < arrayOfEchantillonInserted.length; i++){
+		arrayOfBindGetRequest.push(request.get.bind(undefined, "http://localhost/api/echantillons-gratuits/"+arrayOfEchantillonInserted[i]._id));
+	}
+	async.parallel(arrayOfBindGetRequest, function(err, results){
+		test.equal(err, undefined, "Erreur dans le get des echantillons (erreur technique)" + err);
+		for(var i = 0; i < arrayOfEchantillonInserted.length; i++){
+			var body = JSON.parse(results[i][0].body);
+			test.equal(body.success, "ok", "Success n'est pas egal a ok dans le get d'un echantillon");
+			test.notEqual(body.echantillon, null, "La reponse du insert ne contient pas un echantillon");
+			test.notEqual(body.echantillon, undefined, "La reponse du insert ne contient pas un echantillon");
+			test.equal(typeof body.echantillon._id, typeof 0, "L'id retourne dans l'insert n'est pas un nombre");
+			test.equal(body.echantillon.title, arrayOfEchantillonInserted[i].title, "Title pas egal");
+			test.equal(body.echantillon.description, arrayOfEchantillonInserted[i].description, "Description pas egal");
+			test.equal(body.echantillon.url, arrayOfEchantillonInserted[i].url, "url pas egal");
+			test.equal(body.echantillon.urlImage, arrayOfEchantillonInserted[i].urlImage, "urlImage pas egal");
+			test.equal(body.echantillon.source, arrayOfEchantillonInserted[i].source, "Source pas egal");
+			test.equal(body.echantillon.author, arrayOfEchantillonInserted[i].author, "Author pas egal");
+			test.equal(body.echantillon.views, 1, "Les views n'ont pas augmente");//On check en meme temps si le comptage de la vue a marche
+		}
+		test.done();
+	});
+};
+
+exports.getEchantillonThatDoesntExist = function(test){
+	request.get("http://localhost/api/echantillons-gratuits/-9", function(err, response, body){
+		body = JSON.parse(body);
+		test.equal(body.success, "ko");
+		test.done();
+	});
+};
+
+exports.updateEchantillon = function(test){
+	test.done();
+}
+
 exports.deleteEchantillons = function(test){
 	arrayOfBindDeleteRequest = new Array();
 	for(var i = 0; i < arrayOfEchantillonInserted.length; i++){
@@ -58,7 +95,6 @@ exports.deleteEchantillons = function(test){
 			test.equal(body.success, "ok", "Success n'est pas egal a ok dans la suppression d'un echantillon");
 		}
 		test.done();
-		console.log("Suppression devrait etre finit");
 	});
 };
 
