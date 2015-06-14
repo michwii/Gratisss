@@ -45,7 +45,7 @@ exports.initRoute = function(app){
 		
 		echantillonService.modifyEchantillon(id, valuesToModidy, function(err, result){
 			if(err){
-				res.statusCode(501);
+				res.statusCode = 501;
 				messageToReturn.success = "ko";
 				messageToReturn.message = "Erreur dans l'update de l'echantillon";
 				res.end(JSON.stringify(messageToReturn));
@@ -92,8 +92,9 @@ exports.initRoute = function(app){
 			var messageToReturn = {};
 		
 			if(err){
+				res.statusCode = 501;
 				messageToReturn.success = "ko";
-				messageToReturn.message("Erreur dans la presence de l'echantillon");
+				messageToReturn.message ="Erreur dans la presence de l'echantillon";
 				res.end(messageToReturn);
 			}else{
 				messageToReturn.success = "ok";
@@ -108,8 +109,25 @@ exports.initRoute = function(app){
 		res.setHeader('Content-Type', 'application/json');
 
 		var id = req.params.id;
+		var messageToReturn = {};
 		echantillonService.deleteEchantillon({_id: id}, function(err, result){
-			res.end(JSON.stringify({success: "ok", echantillon: result}));
+			result = JSON.parse(result);//Car je sais pas pourquoi mais Mongoose te retourne une string plutot qu'un object
+			if(err || result.ok == 0){
+				res.statusCode = 501;
+				messageToReturn.success = "ko";
+				messageToReturn.message = "erreur technique" + err;
+				res.end(JSON.stringify(messageToReturn));
+			}else if(result.n == 0){
+				res.statusCode = 404;
+				messageToReturn.success = "ko";
+				messageToReturn.message = "Echantillon non supprime car non trouve";
+				res.end(JSON.stringify(messageToReturn));
+			}else{
+				messageToReturn.success = "ok";
+				messageToReturn.message = "Echantillon supprime correctement";
+				res.end(JSON.stringify(messageToReturn));
+			}
+			
 		});
 		
 	});
@@ -119,7 +137,22 @@ exports.initRoute = function(app){
 
 		var id = req.params.id;
 		echantillonService.getOneEchantillon({_id: id}, function(err, result){
-			res.end(JSON.stringify({success: "ok", echantillon: result}));
+			var messageToReturn = {};
+			if(err){
+				res.statusCode = 501;
+				messageToReturn.success = "ko";
+				messageToReturn.message = "Erreur technique";
+				res.end(JSON.stringify(messageToReturn));
+			}else if(result == null){
+				res.statusCode = 404;
+				messageToReturn.success = "ko";
+				messageToReturn.message = "Erreur echantillon not found";
+				res.end(JSON.stringify(messageToReturn));
+			}else{
+				messageToReturn.success = "ok";
+				messageToReturn.echantillon = result;
+				res.end(JSON.stringify(messageToReturn));
+			}
 		});
 	});
 	

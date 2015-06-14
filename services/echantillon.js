@@ -48,7 +48,7 @@ exports.insertEchantillon = function (echantillon, callback){
 exports.getOneEchantillon = function (parametersOfSearch, callback){
 	Echantillons.findOne(parametersOfSearch, function (err, echantillon) {
 		if(err){
-			console.log("Erreur lors de la recherche d'un echantillon");
+			console.log("Erreur lors de la recherche d'un echantillon : " + err);
 			callback(err, null);
 		}else{
 			if(echantillon != null){//Au cas ou la base de donnee est vide et qu'il n'y a pas d'echantillon
@@ -74,12 +74,7 @@ exports.modifyEchantillon = function(id, newValues, callback){
 };
 
 exports.deleteEchantillon = function(id, callback){
-	Echantillons.remove({_id : id}, function(err, result){
-		if(err){
-			callback(err, null);
-		}
-		callback(err, result);
-	});
+	Echantillons.remove({_id : id}, callback);
 };
 
 exports.getAllEchantillons = function (parametersOfSearch, callback){

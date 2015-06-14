@@ -7,6 +7,8 @@ exports.validateEmail = function validateEmail(email) {
 exports.transformBrandNameInUrl = function(brandName){
 	brandName = brandName.replace(/-/g,"_");
 	brandName = brandName.replace(/ /g, "-");
+	brandName = brandName.replace(/'/g, "-");
+	brandName = brandName.replace(/"/g, "-");
 	return encodeURIComponent(brandName);
 };
 
