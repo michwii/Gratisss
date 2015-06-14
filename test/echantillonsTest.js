@@ -79,8 +79,38 @@ exports.getEchantillonThatDoesntExist = function(test){
 };
 
 exports.updateEchantillon = function(test){
-	test.done();
+
+	arrayOfBindPutRequest = new Array();
+	for(var i = 0; i < arrayOfEchantillonInserted.length; i++){
+		
+		arrayOfEchantillonInserted[i].title = "NEW Title avec des espaces et des acceents éééé 'et des guillemets \" ohhh  \" "+i;
+		arrayOfEchantillonInserted[i].description=  "NEW Description"+i;
+		arrayOfEchantillonInserted[i].url= "http://www.newurlthatdoesntexist.com";
+		arrayOfEchantillonInserted[i].urlImage=  "http://www.newurlthatdoesntexist.com";
+		arrayOfEchantillonInserted[i].author=  "NEW UnitTest"+i;
+		arrayOfEchantillonInserted[i].source=  "http://www.newsourcethatdoesntexist.com";
+		arrayOfEchantillonInserted[i].category=  "Parfum";
+	
+		arrayOfBindPutRequest.push(request.put.bind(undefined, {url : "http://localhost/api/echantillons-gratuits/"+arrayOfEchantillonInserted[i]._id, form : arrayOfEchantillonInserted[i]}));
+	};
+	
+	async.parallel(arrayOfBindPutRequest, function(err, results){
+		test.equal(err, undefined, "Erreur dans le get des echantillons (erreur technique)" + err);
+		for(var i = 0; i < arrayOfEchantillonInserted.length; i++){	
+			var body = JSON.parse(results[i][0].body);
+			test.equal(body.success, "ok", "Success n'est pas egal a ok dans le update d'un echantillon");
+		}
+		test.done();
+	});
 }
+
+exports.updateEchantillonThatDoesntExist = function(test){
+	request.put("http://localhost/api/echantillons-gratuits/-9", function(err, response, body){
+		body = JSON.parse(body);
+		test.equal(body.success, "ko");
+		test.done();
+	});
+};
 
 exports.deleteEchantillons = function(test){
 	arrayOfBindDeleteRequest = new Array();

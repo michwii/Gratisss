@@ -44,16 +44,20 @@ exports.initRoute = function(app){
 		var valuesToModidy = req.body;
 		
 		echantillonService.modifyEchantillon(id, valuesToModidy, function(err, result){
-			if(err){
+			if(err && result.ok == 0){
 				res.statusCode = 501;
 				messageToReturn.success = "ko";
 				messageToReturn.message = "Erreur dans l'update de l'echantillon";
+				res.end(JSON.stringify(messageToReturn));
+			}else if(result.nModified == 0){
+				res.statusCode = 404;
+				messageToReturn.success = "ko";
+				messageToReturn.message = "L'echantillon n'a pas ete modifie car non trouve";
 				res.end(JSON.stringify(messageToReturn));
 			}else{
 				messageToReturn.success = "ok";
 				messageToReturn.echantillon = result;
 				res.end(JSON.stringify(messageToReturn));
-
 			}
 		});
 		
