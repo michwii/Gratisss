@@ -22,16 +22,14 @@ app.use(multer({
 	rename: function (fieldname, filename) {
 		return filename.replace(/\W+/g, '-').toLowerCase();
 	},
-	changeDest: function(dest, req, res) {
+	changeDest: function(dest, req, res) {//Dans cette fonction on va generer le dossier de destination en fonction de la date du jour. 
 		var stat = null;
 		var currentDate = new Date();
 		var currentMonth = currentDate.getMonth()+1;
 		var currentDay = currentDate.getDate();
 		var finalDestinationUpload = dest + '/' + currentDay + '/' + currentMonth;
 		
-		mkdirp.sync(finalDestinationUpload);
-		
-		
+		mkdirp.sync(finalDestinationUpload);//On creer toutes les sous directory necessaire
 		return finalDestinationUpload;
 	}
 	
@@ -73,10 +71,11 @@ app.get('/', function (req, res) {
 });
 
 app.post('/api/upload', function(req, res){
-	var fileUploaded = req.files;
+	var fileUploaded = req.files.fileUpload;
+	fileUploaded.path = fileUploaded.path.replace('public', "").replace(/\\/g, '/');
 	var messageReturned = {};
 	messageReturned.success = "ok";
-	messageReturned.message = "UploadSuccessful";
+	messageReturned.fileUploaded = fileUploaded;
 	console.log(fileUploaded);
 	res.end(JSON.stringify(messageReturned));
 });
