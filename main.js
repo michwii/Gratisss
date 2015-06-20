@@ -3,6 +3,9 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var async = require('async');
 var cors = require("cors");
+var multer  = require('multer');
+var fs = require("fs");
+var mkdirp = require('mkdirp');//Sert a creer tout les sous repertoires necessaire. On l'utilise pour enregistrer un ulpoad avec comme sous folder la date du jour
 var usersRoutes = require(__dirname + '/routes/usersRoutes');
 var echantillonsRoutes = require(__dirname + '/routes/echantillonsRoutes');
 var codesReductionRoutes = require(__dirname + '/routes/codesReductionRoutes');
@@ -13,7 +16,26 @@ var echantillonService = require(__dirname + '/services/echantillon.js');
 var app = express();
 
 app.use(cors());
-app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.json());       // to support JSON-encoded bodies
+app.use(multer({ 
+	dest: './public/img/uploads', 
+	rename: function (fieldname, filename) {
+		return filename.replace(/\W+/g, '-').toLowerCase();
+	},
+	changeDest: function(dest, req, res) {
+		var stat = null;
+		var currentDate = new Date();
+		var currentMonth = currentDate.getMonth()+1;
+		var currentDay = currentDate.getDate();
+		var finalDestinationUpload = dest + '/' + currentDay + '/' + currentMonth;
+		
+		mkdirp.sync(finalDestinationUpload);
+		
+		
+		return finalDestinationUpload;
+	}
+	
+}));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
 app.use(session({
@@ -48,6 +70,15 @@ app.get('/', function (req, res) {
 		}
 		res.render(__dirname + '/views/index.ejs', {user: userConnected, echantillonSelected: result, mostViewedEchantillons: req.mostViewedEchantillons});
 	});
+});
+
+app.post('/api/upload', function(req, res){
+	var fileUploaded = req.files;
+	var messageReturned = {};
+	messageReturned.success = "ok";
+	messageReturned.message = "UploadSuccessful";
+	console.log(fileUploaded);
+	res.end(JSON.stringify(messageReturned));
 });
 
 app.get('/points-de-fidelite', function (req, res) {

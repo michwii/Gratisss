@@ -65,6 +65,7 @@ exports.getEchantillonsThatHaveBeenInserted = function(test){
 			test.equal(body.echantillon.source, arrayOfEchantillonInserted[i].source, "Source pas egal");
 			test.equal(body.echantillon.author, arrayOfEchantillonInserted[i].author, "Author pas egal");
 			test.equal(body.echantillon.views, 1, "Les views n'ont pas augmente");//On check en meme temps si le comptage de la vue a marche
+			test.equal(body.echantillon.validated, false, "Les views n'ont pas augmente");
 		}
 		test.done();
 	});
@@ -112,6 +113,32 @@ exports.updateEchantillonThatDoesntExist = function(test){
 	});
 };
 
+exports.verifyEchantillonAfterUpdate = function(test){
+	arrayOfBindGetRequest = new Array();
+	for(var i = 0; i < arrayOfEchantillonInserted.length; i++){
+		arrayOfBindGetRequest.push(request.get.bind(undefined, "http://localhost/api/echantillons-gratuits/"+arrayOfEchantillonInserted[i]._id));
+	}
+	async.parallel(arrayOfBindGetRequest, function(err, results){
+		test.equal(err, undefined, "Erreur dans le get des echantillons (erreur technique)" + err);
+		for(var i = 0; i < arrayOfEchantillonInserted.length; i++){
+			var body = JSON.parse(results[i][0].body);
+			test.equal(body.success, "ok", "Success n'est pas egal a ok dans le get d'un echantillon");
+			test.notEqual(body.echantillon, null, "La reponse du insert ne contient pas un echantillon");
+			test.notEqual(body.echantillon, undefined, "La reponse du insert ne contient pas un echantillon");
+			test.equal(typeof body.echantillon._id, typeof 0, "L'id retourne dans l'insert n'est pas un nombre");
+			test.equal(body.echantillon.title, arrayOfEchantillonInserted[i].title, "Title pas egal");
+			test.equal(body.echantillon.description, arrayOfEchantillonInserted[i].description, "Description pas egal");
+			test.equal(body.echantillon.url, arrayOfEchantillonInserted[i].url, "url pas egal");
+			test.equal(body.echantillon.urlImage, arrayOfEchantillonInserted[i].urlImage, "urlImage pas egal");
+			test.equal(body.echantillon.source, arrayOfEchantillonInserted[i].source, "Source pas egal");
+			test.equal(body.echantillon.author, arrayOfEchantillonInserted[i].author, "Author pas egal");
+			test.equal(body.echantillon.views, 2, "Les views n'ont pas augmente");//On check en meme temps si le comptage de la vue a marche
+			test.equal(body.echantillon.validated, false, "Les views n'ont pas augmente");
+		}
+		test.done();
+	});
+}
+
 exports.deleteEchantillons = function(test){
 	arrayOfBindDeleteRequest = new Array();
 	for(var i = 0; i < arrayOfEchantillonInserted.length; i++){
@@ -151,80 +178,3 @@ exports.verificationThatTheyDontExistAnyMore = function(test){
 		test.done();
 	});
 };
-
-/*
-var arrayOfCodesReductionInserted = new Array();
-for(var i = 0; i < 10; i++){
-	var codeToInsert = {
-		brand: "Brand"+i,
-		code: "Code"+i, 
-		description: "Description"+i, 
-		url: "http://url"+i,
-		urlLogo: "http://urlLogo"+i,
-		validityStart: "10/10/2015",
-		validityEnd: "10/10/2016"
-	};
-	arrayOfCodesReductionInserted.push(codeToInsert);
-}
-
-exports.insertCodeReduction = function(test){
-	
-	var arrayOfRequestPostBinded = new Array();
-	for(var i = 0; i< 10; i++){
-		var requestPostBinded = request.post.bind(undefined, {url:"http://localhost/api/codes-de-reduction", form: arrayOfCodesReductionInserted[i]});
-		arrayOfRequestPostBinded.push(requestPostBinded);
-	}
-	async.series(arrayOfRequestPostBinded, function(error, response){
-		test.equal(error, null, "Erreur lors de l'insertion d'un CodeDeReduction");
-		for(var i = 0; i< 10; i++){
-			var responseParsed = JSON.parse(response[i][0].body);
-			test.equal(responseParsed.success, "ok", "L'insertion ne sait pas passe correctement");
-			arrayOfCodesReductionInserted[i]._id = responseParsed.codeReduction._id;
-		}
-		test.done();
-	});
-};
-
-exports.getAllCodesReductionAndTestThem = function(test){
-	
-	request.get("http://localhost/api/codes-de-reduction", function(err, response, body){
-		test.equal(err, null, "Erreur dans le getAll");
-		var arrayOfRequestGetBinded = new Array();
-		var parsedResponse = JSON.parse(body).codesReduction;
-		for(var i = 0; i< parsedResponse.length; i++){
-			var id = parsedResponse[i]._id;
-			test.notEqual(id, undefined, "Erreur dans le getAll. ID = undefined");
-			var requestGetBinded = request.get.bind(undefined, "http://localhost/api/codes-de-reduction/"+id);
-			arrayOfRequestGetBinded.push(requestGetBinded);
-		}
-
-		async.series(arrayOfRequestGetBinded, function(err, result){
-			test.equal(err, null, "Erreur dans le getAll");
-			for(var i = 0; i< result.length; i++){
-				var responseParsed = JSON.parse(result[i][0].body);
-				test.equal(responseParsed.success, "ok","Erreur dans le getAll GetAllCodesReduction. Le success n'est pas egal a ok ");
-			}
-			test.done();
-		});
-		
-		
-	});
-}
-
-exports.delete = function(test){
-	var arrayOfRequestDeleteBinded = new Array();
-	for(var i = 0; i< 10; i++){
-		var requestDeleteBinded = request.del.bind(undefined, "http://localhost/api/codes-de-reduction/"+arrayOfCodesReductionInserted[i]._id);
-		arrayOfRequestDeleteBinded.push(requestDeleteBinded);
-	}
-	async.series(arrayOfRequestDeleteBinded, function(error, response){
-		test.equal(error, null, "Erreur lors de l'insertion d'un CodeDeReduction");
-		for(var i = 0; i< 10; i++){
-			var responseParsed = JSON.parse(response[i][0].body);
-			test.equal(responseParsed.success, "ok", "La suppression ne sait pas passe correctement");
-		}
-		test.done();
-	});
-};
-
-*/

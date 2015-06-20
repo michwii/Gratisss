@@ -3,6 +3,7 @@ autoIncrement = require('mongoose-auto-increment');
 
 // Connection URL
 var urlDatabase = 'mongodb://localhost:27017/';
+//var urlDatabase = 'mongodb://gratisss:chuck norris@ds045679.mongolab.com:45679/gratisss-pre-prod';
 var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 
@@ -21,8 +22,8 @@ var EchantillonsSchema = new Schema({
 	url				: 		String,
 	source			: 		String,
 	author			: 		{ type: String, default: "Gratisss" },
-	validated		:		Boolean,
-	daySelection	:		Boolean,
+	validated		:		{ type: Boolean, default: false },
+	daySelection	:		{ type: Boolean, default: false },
 	category		:		String,
 	views			:		{ type: Number, default: 0 },
 	insertedOn		:		{ type: Date, default: Date.now }
