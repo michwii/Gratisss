@@ -10,7 +10,7 @@
     "ejs": "latest",
     "express": "latest",
     "express-session": "latest",
-    "mkdirp": "^0.5.1",//Sert a creer tout les sous repertoires necessaire. On l'utilise pour enregistrer un ulpoad avec comme sous folder la date du jour
+    "mkdirp": "^0.5.1",
     "mongodb": "latest",
     "mongoose": "latest",
     "mongoose-auto-increment": "latest",
