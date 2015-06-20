@@ -76,7 +76,6 @@ app.post('/api/upload', function(req, res){
 	var messageReturned = {};
 	messageReturned.success = "ok";
 	messageReturned.fileUploaded = fileUploaded;
-	console.log(fileUploaded);
 	res.end(JSON.stringify(messageReturned));
 });
 
