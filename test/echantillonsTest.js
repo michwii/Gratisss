@@ -178,3 +178,31 @@ exports.verificationThatTheyDontExistAnyMore = function(test){
 		test.done();
 	});
 };
+
+exports.allEchantillonsPresentIntoDatabaseAreReachable = function(test){
+	request.get("http://localhost/api/echantillons-gratuits", function(err, response, body){
+		test.equal(err, undefined, "Erreur dans le getAllEchantillonsAPI (erreur technique)" + err);
+		var responseParsed = JSON.parse(body);
+		test.equal(responseParsed.success, "ok", "le success n'est pas egal a OK");
+		
+		var allEchantillons = responseParsed.echantillons;
+		
+		var arrayOfEchantillonBindRequest = new Array();
+		for(var i = 0; i < allEchantillons.length; i++){
+			var echantillon = allEchantillons[i];
+			//On va lancer une requette HTTP aussi bien sur l'API que sur l'interface WEB classique
+			arrayOfEchantillonBindRequest.push(request.get.bind(undefined, "http://localhost/echantillons-gratuits/titleBidon/"+echantillon._id));
+			arrayOfEchantillonBindRequest.push(request.get.bind(undefined, "http://localhost/api/echantillons-gratuits/"+echantillon._id));
+		}
+		
+		async.parallel(arrayOfEchantillonBindRequest, function(err, responses){
+			test.equal(err, undefined, "Erreur dans le getAllEchantillonsAPI (erreur technique)" + err);
+			for(var i = 0; i < responses.length; i++){
+				var statusCodeRequest = responses[i][0].statusCode;
+				test.equal(statusCodeRequest, 200, "Le code de retour n'est pas 200");
+			}
+			test.done();
+		});
+		
+	});
+};
