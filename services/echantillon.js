@@ -20,6 +20,7 @@ var EchantillonsSchema = new Schema({
 	urlImage   		: 		String,
 	description 	: 		String,
 	url				: 		String,
+	urlClean		:		String,
 	source			: 		String,
 	author			: 		{ type: String, default: "Gratisss" },
 	validated		:		{ type: Boolean, default: false },
