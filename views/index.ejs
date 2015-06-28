@@ -1,4 +1,9 @@
+<!DOCTYPE html>
+<html>
+<head>
 <% include header %>
+<title>Gratisss.fr - Echantillon selectionne par notre equipe</title>
+</head>
 <body class="pull_top">
     
 <% include navBar %>
@@ -11,7 +16,7 @@
 			<div class="col-sm-5">
 				<div class="feature">
                     <div class="img">
-                        <img src="<%= echantillonSelected.urlImage %>">
+                        <img src="<%= echantillonSelected.urlImage %>" alt="<%= echantillonSelected.title %>">
                     </div>
 				</div>
 			</div>
@@ -33,3 +38,6 @@
 	</div>
 
 	<% include footer %>
+	
+</body>
+</html>
