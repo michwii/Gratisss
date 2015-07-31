@@ -139,6 +139,18 @@ exports.verifyEchantillonAfterUpdate = function(test){
 	});
 }
 
+
+exports.verifyTheyExistWithASearchQuery = function(test){
+	arrayOfBindGetRequest = new Array();
+	for(var i = 0; i < arrayOfEchantillonInserted.length; i++){
+		arrayOfBindGetRequest.push(request.get.bind(undefined, "http://localhost/api/echantillons-gratuits/"+arrayOfEchantillonInserted[i]._id));
+	}
+}
+
+exports.verifyTheyDontExistWithASearchQuery = function(test){
+
+}
+
 exports.deleteEchantillons = function(test){
 	arrayOfBindDeleteRequest = new Array();
 	for(var i = 0; i < arrayOfEchantillonInserted.length; i++){

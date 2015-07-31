@@ -12,8 +12,8 @@
     "express-session": "latest",
     "mkdirp": "^0.5.1",
     "mongodb": "latest",
-    "mongoose": "latest",
-    "mongoose-auto-increment": "latest",
+    "mongoose": "4.0.0",
+    "mongoose-auto-increment": "4.0.0",
     "multer": "^0.1.8",
     "request": "^2.55.0"
   },

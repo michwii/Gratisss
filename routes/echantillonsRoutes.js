@@ -87,11 +87,11 @@ exports.initRoute = function(app){
 		});
 	});
 	
-	app.get('/api/echantillons-gratuits/search/:source', function(req, res){
+	app.get('/api/echantillons-gratuits/search/:title', function(req, res){
 		res.setHeader('Content-Type', 'application/json');
 
-		var source = req.params.source;
-		echantillonService.getOneEchantillon({source:source}, function(err, result){
+		var title = req.params.title;
+		echantillonService.getOneEchantillon({title:title}, function(err, result){
 		
 			var messageToReturn = {};
 		
