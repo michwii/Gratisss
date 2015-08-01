@@ -63,14 +63,14 @@ exports.getOneEchantillon = function (parametersOfSearch, callback){
 } 
 
 exports.modifyEchantillon = function(id, newValues, callback){
-	Echantillons.update({_id : id}, newValues, null, function(err, result){
+	Echantillons.update({_id : id}, newValues, null, function(err, numAffected){
 		if(err){
 			callback(err, null);
 		}else{
 			if(newValues.daySelection){
 				exports.makeEchantillonDailySelection(id, function(){});
 			}
-			callback(err, result);
+			callback(err, numAffected);
 		}
 	});
 };

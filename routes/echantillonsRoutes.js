@@ -43,20 +43,20 @@ exports.initRoute = function(app){
 		var id = req.params.id;
 		var valuesToModidy = req.body;
 		
-		echantillonService.modifyEchantillon(id, valuesToModidy, function(err, result){
-			if(err && result.ok == 0){
+		echantillonService.modifyEchantillon(id, valuesToModidy, function(err, numAffected){
+			if(err){
 				res.statusCode = 501;
 				messageToReturn.success = "ko";
 				messageToReturn.message = "Erreur dans l'update de l'echantillon";
 				res.end(JSON.stringify(messageToReturn));
-			}else if(result.nModified == 0){
+			}else if(numAffected == 0){
 				res.statusCode = 404;
 				messageToReturn.success = "ko";
 				messageToReturn.message = "L'echantillon n'a pas ete modifie car non trouve";
 				res.end(JSON.stringify(messageToReturn));
 			}else{
 				messageToReturn.success = "ok";
-				messageToReturn.echantillon = result;
+				messageToReturn.echantillon = valuesToModidy;
 				res.end(JSON.stringify(messageToReturn));
 			}
 		});
@@ -116,12 +116,12 @@ exports.initRoute = function(app){
 		var messageToReturn = {};
 		echantillonService.deleteEchantillon({_id: id}, function(err, result){
 			result = JSON.parse(result);//Car je sais pas pourquoi mais Mongoose te retourne une string plutot qu'un object
-			if(err || result.ok == 0){
+			if(err){
 				res.statusCode = 501;
 				messageToReturn.success = "ko";
 				messageToReturn.message = "erreur technique" + err;
 				res.end(JSON.stringify(messageToReturn));
-			}else if(result.n == 0){
+			}else if(result == 0){
 				res.statusCode = 404;
 				messageToReturn.success = "ko";
 				messageToReturn.message = "Echantillon non supprime car non trouve";

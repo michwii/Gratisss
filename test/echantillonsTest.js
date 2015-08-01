@@ -145,10 +145,11 @@ exports.verifyTheyExistWithASearchQuery = function(test){
 	for(var i = 0; i < arrayOfEchantillonInserted.length; i++){
 		arrayOfBindGetRequest.push(request.get.bind(undefined, "http://localhost/api/echantillons-gratuits/"+arrayOfEchantillonInserted[i]._id));
 	}
+	test.done();
 }
 
 exports.verifyTheyDontExistWithASearchQuery = function(test){
-
+	test.done();
 }
 
 exports.deleteEchantillons = function(test){
