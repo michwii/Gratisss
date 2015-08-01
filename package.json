@@ -8,7 +8,7 @@
     "body-parser": "latest",
     "cors": "^2.7.1",
     "ejs": "latest",
-    "express": "latest",
+    "express": "4.13.2",
     "express-session": "1.11.3",
     "mkdirp": "^0.5.1",
     "mongodb": "2.0",
