@@ -20,9 +20,11 @@ app.use(bodyParser.json());       // to support JSON-encoded bodies
 app.use(multer({ 
 	dest: './public/img/uploads', 
 	rename: function (fieldname, filename) {
+		console.log("rename +1");
 		return filename.replace(/\W+/g, '-').toLowerCase();
 	},
 	changeDest: function(dest, req, res) {//Dans cette fonction on va generer le dossier de destination en fonction de la date du jour. 
+		console.log("changeDest +1");
 		var stat = null;
 		var currentDate = new Date();
 		var currentMonth = currentDate.getMonth()+1;
