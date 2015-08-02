@@ -71,6 +71,7 @@ app.get('/', function (req, res) {
 });
 
 app.post('/api/upload', function(req, res){
+	console.log("Un upload vient d'etre demande");
 	var fileUploaded = req.files.fileUpload;
 	fileUploaded.path = fileUploaded.path.replace('public', "").replace(/\\/g, '/');
 	var messageReturned = {};
