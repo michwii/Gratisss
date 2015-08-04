@@ -89,7 +89,6 @@ exports.initRoute = function(app){
 	app.get('/inscription', function (req, res) {
 		var session = req.session;
 		var userConnected = session.user;
-		console.log(req.mostViewedEchantillons);
 		res.render(__dirname + '/../views/inscription.ejs', {user: userConnected, mostViewedEchantillons: req.mostViewedEchantillons});
 	});
 

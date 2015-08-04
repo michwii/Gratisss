@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
-autoIncrement = require('mongoose-auto-increment');
+var autoIncrement = require('mongoose-auto-increment');
+var utils = require(__dirname + "/utils.js");
 
 // Connection URL
 var urlDatabase = 'mongodb://localhost:27017/';
@@ -37,6 +38,10 @@ EchantillonsSchema.plugin(autoIncrement.plugin, 'Echantillons');
 exports.insertEchantillon = function (echantillon, callback){
 	var echantillonToInsert = new Echantillons(echantillon);
 	
+	if(echantillonToInsert.urlClean == undefined || echantillonToInsert.urlClean == null){
+		echantillonToInsert.urlClean = utils.getCleanUrl(echantillonToInsert.title);
+	}
+	
 	echantillonToInsert.save(function (err, echantillonInserted) {
 		if(err){
 			console.log("Erreur lors de l'insertion d'un echantillon");
@@ -57,22 +62,37 @@ exports.getOneEchantillon = function (parametersOfSearch, callback){
 				echantillon.views++;
 				echantillon.save();
 			}
+			console.log(__line + __file + echantillon);
 			callback(err, echantillon);
 		}
 	});
 } 
 
 exports.modifyEchantillon = function(id, newValues, callback){
-	Echantillons.update({_id : id}, newValues, null, function(err, numAffected){
+
+	//	Avant de faire un update on nettoie le model des champs qui ne servent pas.
+	
+	delete newValues.views;
+	delete newValues.urlClean;
+	delete newValues.insertedOn;
+	
+	//Fin clean model
+	
+	Echantillons.findByIdAndUpdate({_id : id}, newValues, function(err, result){
+		if(newValues.title){//Au cas ou le modify ne contiendrait pas de title
+			newValues.urlClean = utils.getCleanUrl(newValues.title);
+		}
+		
 		if(err){
 			callback(err, null);
 		}else{
-			if(newValues.daySelection){
+			if(newValues.daySelection && result){//Si on test pas le result a la fin on pourrait mettre en daily selection un id qui n'existe pas
 				exports.makeEchantillonDailySelection(id, function(){});
 			}
-			callback(err, numAffected);
+			callback(err, result);
 		}
 	});
+	
 };
 
 exports.deleteEchantillon = function(id, callback){

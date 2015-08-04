@@ -39,7 +39,7 @@ exports.insertEchantillons = function(test){
 			test.equal(body.echantillon.urlImage, arrayOfEchantillonInserted[i].urlImage, "urlImage pas egal");
 			test.equal(body.echantillon.source, arrayOfEchantillonInserted[i].source, "Source pas egal");
 			test.equal(body.echantillon.author, arrayOfEchantillonInserted[i].author, "Author pas egal");
-			arrayOfEchantillonInserted[i]._id = body.echantillon._id;//On set l'id pour pouvoir s'en reservir dans la suppression et le modify
+			arrayOfEchantillonInserted[i] = body.echantillon;//On set l'id + tout les propriete genere automatiquement pour pouvoir s'en reservir dans la suppression et le modify
 		}
 		test.done();
 	});
@@ -71,7 +71,7 @@ exports.getEchantillonsThatHaveBeenInserted = function(test){
 	});
 };
 
-exports.getEchantillonThatDoesntExist = function(test){
+exports.getEchantillonsThatDoNotExist = function(test){
 	request.get("http://localhost/api/echantillons-gratuits/-9", function(err, response, body){
 		body = JSON.parse(body);
 		test.equal(body.success, "ko");
@@ -100,6 +100,8 @@ exports.updateEchantillon = function(test){
 		for(var i = 0; i < arrayOfEchantillonInserted.length; i++){	
 			var body = JSON.parse(results[i][0].body);
 			test.equal(body.success, "ok", "Success n'est pas egal a ok dans le update d'un echantillon");
+			//test.equal(body.echantillon.urlClean, utils.cleanUrl(arrayOfEchantillonInserted[i].title), "URLClean n'est pas bonne");
+			arrayOfEchantillonInserted[i]= body.echantillon;
 		}
 		test.done();
 	});
@@ -133,7 +135,7 @@ exports.verifyEchantillonAfterUpdate = function(test){
 			test.equal(body.echantillon.source, arrayOfEchantillonInserted[i].source, "Source pas egal");
 			test.equal(body.echantillon.author, arrayOfEchantillonInserted[i].author, "Author pas egal");
 			test.equal(body.echantillon.views, 2, "Les views n'ont pas augmente");//On check en meme temps si le comptage de la vue a marche
-			test.equal(body.echantillon.validated, false, "Les views n'ont pas augmente");
+			test.equal(body.echantillon.validated, false, "Les views sont valides");
 		}
 		test.done();
 	});
@@ -143,9 +145,35 @@ exports.verifyEchantillonAfterUpdate = function(test){
 exports.verifyTheyExistWithASearchQuery = function(test){
 	arrayOfBindGetRequest = new Array();
 	for(var i = 0; i < arrayOfEchantillonInserted.length; i++){
-		arrayOfBindGetRequest.push(request.get.bind(undefined, "http://localhost/api/echantillons-gratuits/"+arrayOfEchantillonInserted[i]._id));
+		console.log(arrayOfEchantillonInserted[i].urlClean);
+		arrayOfBindGetRequest.push(request.get.bind(undefined, "http://localhost/api/echantillons-gratuits/search/urlClean="+arrayOfEchantillonInserted[i].urlClean));
 	}
-	test.done();
+	
+	async.parallel(arrayOfBindGetRequest, function(err, results){
+		test.equal(err, undefined, "Erreur dans le search des echantillons (erreur technique)" + err);
+		for(var i = 0; i < arrayOfEchantillonInserted.length; i++){
+			var body = JSON.parse(results[i][0].body);
+			console.log(body);
+			test.equal(body.success, "ok", "Success n'est pas egal a ok dans le get d'un echantillon");
+			test.notEqual(body.echantillon, null, "La reponse du search ne contient pas un echantillon");
+			/*
+			test.notEqual(body.echantillon, undefined, "La reponse du search ne contient pas un echantillon");
+			test.equal(typeof body.echantillon._id, typeof 0, "L'id retourne dans search n'est pas un nombre");
+			test.equal(body.echantillon.title, arrayOfEchantillonInserted[i].title, "Title pas egal");
+			test.equal(body.echantillon.description, arrayOfEchantillonInserted[i].description, "Description pas egal");
+			
+			test.equal(body.echantillon.url, arrayOfEchantillonInserted[i].url, "url pas egal");
+			test.equal(body.echantillon.urlImage, arrayOfEchantillonInserted[i].urlImage, "urlImage pas egal");
+			test.equal(body.echantillon.source, arrayOfEchantillonInserted[i].source, "Source pas egal");
+			test.equal(body.echantillon.author, arrayOfEchantillonInserted[i].author, "Author pas egal");
+			test.equal(body.echantillon.views, 3, "Les views n'ont pas augmente");//On check en meme temps si le comptage de la vue a marche
+			test.equal(body.echantillon.validated, false, "Les views n'ont pas augmente");
+			*/
+			
+		}
+		
+		test.done();
+	});
 }
 
 exports.verifyTheyDontExistWithASearchQuery = function(test){

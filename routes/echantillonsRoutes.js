@@ -42,21 +42,22 @@ exports.initRoute = function(app){
 		var messageToReturn = {};
 		var id = req.params.id;
 		var valuesToModidy = req.body;
+				
+		echantillonService.modifyEchantillon(id, valuesToModidy, function(err, result){
 		
-		echantillonService.modifyEchantillon(id, valuesToModidy, function(err, numAffected){
 			if(err){
 				res.statusCode = 501;
 				messageToReturn.success = "ko";
 				messageToReturn.message = "Erreur dans l'update de l'echantillon";
 				res.end(JSON.stringify(messageToReturn));
-			}else if(numAffected == 0){
+			}else if(result == undefined || result == null){
 				res.statusCode = 404;
 				messageToReturn.success = "ko";
 				messageToReturn.message = "L'echantillon n'a pas ete modifie car non trouve";
 				res.end(JSON.stringify(messageToReturn));
 			}else{
 				messageToReturn.success = "ok";
-				messageToReturn.echantillon = valuesToModidy;
+				messageToReturn.echantillon = result;
 				res.end(JSON.stringify(messageToReturn));
 			}
 		});
@@ -87,18 +88,25 @@ exports.initRoute = function(app){
 		});
 	});
 	
-	app.get('/api/echantillons-gratuits/search/:title', function(req, res){
+	app.get('/api/echantillons-gratuits/search/:param=:value', function(req, res){
 		res.setHeader('Content-Type', 'application/json');
 
-		var title = req.params.title;
-		echantillonService.getOneEchantillon({title:title}, function(err, result){
+		var param = req.params.param;
+		var value = req.params.value;
+		
+		echantillonService.getOneEchantillon({param:value}, function(err, result){
 		
 			var messageToReturn = {};
 		
 			if(err){
 				res.statusCode = 501;
 				messageToReturn.success = "ko";
-				messageToReturn.message ="Erreur dans la presence de l'echantillon";
+				messageToReturn.message ="Erreur technique";
+				res.end(messageToReturn);
+			}else if(result == null){
+				res.statusCode = 404;
+				messageToReturn.success = "ko";
+				messageToReturn.message ="Erreur echantillon non trouve";
 				res.end(messageToReturn);
 			}else{
 				messageToReturn.success = "ok";

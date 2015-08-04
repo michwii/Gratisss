@@ -17,3 +17,10 @@ exports.transformUrlInBrandName = function(url){
 	url = url.replace(/_/g,"-");
 	return url;
 };
+
+exports.getCleanUrl = function(url){
+	var clean = url.replace(/(^\-+|[^a-zA-Z0-9\/_| -]+|\-+$)/g, '')
+            .toLowerCase()
+            .replace(/[\/_| -]+/g, '-');
+	return clean;
+};

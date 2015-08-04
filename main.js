@@ -73,7 +73,6 @@ app.get('/', function (req, res) {
 });
 
 app.post('/api/upload', function(req, res){
-	console.log("Un upload vient d'etre demande");
 	var fileUploaded = req.files.fileUpload;
 	fileUploaded.path = fileUploaded.path.replace('public', "").replace(/\\/g, '/');
 	var messageReturned = {};
@@ -83,7 +82,6 @@ app.post('/api/upload', function(req, res){
 });
 
 app.get('/points-de-fidelite', function (req, res) {
-	console.log("point de fidelite");
 	var session = req.session;
 	var userConnected = session.user;
 	res.render(__dirname + '/views/fidelite.ejs', {user: userConnected, mostViewedEchantillons: req.mostViewedEchantillons});
