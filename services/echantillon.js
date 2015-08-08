@@ -32,44 +32,66 @@ var EchantillonsSchema = new Schema({
 });
 var Echantillons = mongoose.model('Echantillons', EchantillonsSchema);
 
+/* 
+	Important : PreSave
+	Avant de sauvegarder un echantillon il y a differente etape a realiser.
+	La premiere est de lui generer une urlClean afin que cette url soit facilement lisible par les moteurs de recherche.
+	Comme l'url doit etre unique il faut verifier si l'url que l'on va generer n'est pas deja insere dans la base de donnees.
+	Cas particulier si je fais un update d'un echantillon en changeant son titre mais l'url clean generer reste la meme (c'est probable mais rare),
+	je risque de declencher une erreur de type "Duplicate urlClean". Voila pourquoi dans la recherche d'une urlClean deja existante on met tous sauf 
+	l'id de l'url que je viens de creer. Si l'echantillon que l'on veut ajouter n'a pas encore d'id alors on inclut pas le search criteria car il 
+	vaudrait undefined et ferait planter la recherche.
+*/
+EchantillonsSchema.pre('save', function (next) {	
+	if(this.title == undefined || this.description == undefined){//On verify que l'echantillon a au minimun deux valeurs
+		var err = new Error('Pas assez de paramettre');
+		next(err);
+	}else{
+		this.urlClean = utils.getCleanUrl(this.title);
+		var searchCriterias = {};
+		searchCriterias.urlClean = this.urlClean;
+		if(this._id != undefined && this._id != null){
+			searchCriterias._id= {$ne : this._id};
+		}
+		
+		Echantillons.findOne(searchCriterias, function(err, echantillon){
+			if(err){
+				next(err);
+			}else if(echantillon){
+				var err = new Error('Duplicate urlClean');
+				next(err);
+			}else{
+				next();
+			}
+		});
+	}
+});
+
 EchantillonsSchema.plugin(autoIncrement.plugin, 'Echantillons');
 
   
 exports.insertEchantillon = function (echantillon, callback){
 	var echantillonToInsert = new Echantillons(echantillon);
-	
-	if(echantillonToInsert.urlClean == undefined || echantillonToInsert.urlClean == null){
-		echantillonToInsert.urlClean = utils.getCleanUrl(echantillonToInsert.title);
-	}
-	
-	echantillonToInsert.save(function (err, echantillonInserted) {
-		if(err){
-			console.log("Erreur lors de l'insertion d'un echantillon");
-			callback(err, null);
-		}else{
-			callback(err, echantillonInserted);
-		}
-	});
+	echantillonToInsert.save(callback);
 } 
 
 exports.getOneEchantillon = function (parametersOfSearch, callback){
 	Echantillons.findOne(parametersOfSearch, function (err, echantillon) {
-		
 		if(err){
 			console.log("Erreur lors de la recherche d'un echantillon : " + err);
 			callback(err, null);
 		}else{
-			if(echantillon != null){//Au cas ou la base de donnee est vide et qu'il n'y a pas d'echantillon
+			if(echantillon != null){//Au cas ou la base de donnees est vide et qu'il n'y a pas d'echantillon
 				echantillon.views++;
-				echantillon.save();
+				echantillon.save(callback);
+			}else{
+				callback(err, null);
 			}
-			//console.log("Ligne 65 echantillonService.js" + JSON.stringify(echantillon));
-			callback(err, echantillon);
 		}
 	});
 } 
 
-exports.modifyEchantillon = function(id, newValues, callback){
+exports.modifyOneEchantillon = function(criterias, newValues, callback){
 
 	//	Avant de faire un update on nettoie le model des champs qui ne servent pas.
 	
@@ -78,21 +100,17 @@ exports.modifyEchantillon = function(id, newValues, callback){
 	delete newValues.insertedOn;
 	
 	//Fin clean model
-	
-	Echantillons.findByIdAndUpdate({_id : id}, newValues, function(err, result){
-		if(newValues.title){//Au cas ou le modify ne contiendrait pas de title
-			newValues.urlClean = utils.getCleanUrl(newValues.title);
-		}
-		
-		if(err){
+
+	Echantillons.findOne(criterias, function(err, echantillon){
+		if(err || echantillon == null || echantillon == undefined){
 			callback(err, null);
 		}else{
-			if(newValues.daySelection && result){//Si on test pas le result a la fin on pourrait mettre en daily selection un id qui n'existe pas
-				exports.makeEchantillonDailySelection(id, function(){});
+			for(var propertyName in newValues) {
+				echantillon[propertyName] = newValues[propertyName];
 			}
-			callback(err, result);
+			echantillon.save(callback);
 		}
-	});
+	});	
 	
 };
 

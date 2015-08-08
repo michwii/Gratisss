@@ -32,41 +32,74 @@ exports.insertEchantillons = function(test){
 			test.equal(body.success, "ok", "Success n'est pas egal a ok dans l'insert d'un echantillon");
 			test.notEqual(body.echantillon, null, "La reponse du insert ne contient pas un echantillon");
 			test.notEqual(body.echantillon, undefined, "La reponse du insert ne contient pas un echantillon");
-			test.equal(typeof body.echantillon._id, typeof 0, "L'id retourne dans l'insert n'est pas un nombre");
-			test.equal(body.echantillon.title, arrayOfEchantillonInserted[i].title, "Title pas egal");
-			test.equal(body.echantillon.description, arrayOfEchantillonInserted[i].description, "Description pas egal");
-			test.equal(body.echantillon.url, arrayOfEchantillonInserted[i].url, "url pas egal");
-			test.equal(body.echantillon.urlImage, arrayOfEchantillonInserted[i].urlImage, "urlImage pas egal");
-			test.equal(body.echantillon.source, arrayOfEchantillonInserted[i].source, "Source pas egal");
-			test.equal(body.echantillon.author, arrayOfEchantillonInserted[i].author, "Author pas egal");
-			arrayOfEchantillonInserted[i] = body.echantillon;//On set l'id + tout les propriete genere automatiquement pour pouvoir s'en reservir dans la suppression et le modify
+			
+			if(body.echantillon){//Car sinon en cas de retour ko les test suivants font planter toute la batterie de test
+				test.equal(typeof body.echantillon._id, typeof 0, "L'id retourne dans l'insert n'est pas un nombre");
+				test.equal(body.echantillon.title, arrayOfEchantillonInserted[i].title, "Title pas egal");
+				test.equal(body.echantillon.description, arrayOfEchantillonInserted[i].description, "Description pas egal");
+				test.equal(body.echantillon.url, arrayOfEchantillonInserted[i].url, "url pas egal");
+				test.equal(body.echantillon.urlImage, arrayOfEchantillonInserted[i].urlImage, "urlImage pas egal");
+				test.equal(body.echantillon.source, arrayOfEchantillonInserted[i].source, "Source pas egal");
+				test.equal(body.echantillon.author, arrayOfEchantillonInserted[i].author, "Author pas egal");
+				test.equal(body.echantillon.urlClean, utils.getCleanUrl(arrayOfEchantillonInserted[i].title), "urlClean pas bon");
+				arrayOfEchantillonInserted[i] = body.echantillon;//On set l'id + tout les propriete genere automatiquement pour pouvoir s'en reservir dans la suppression et le modify
+			}else{
+				arrayOfEchantillonInserted[i]._id = -1;//Comme ca on est sur de declancher une erreur correct pour tous les tests qui vont suivre (sinon on aurait la valeur undefined a chaque appel)
+			}		
 		}
 		test.done();
 	});
 };
 
+exports.insertEchantillonWithATitleThatAlreadyExist = function(test){
+	
+	var echantillonToInsert = {
+		title: "Title avec des espaces et des acceents éééé 'et des guillemets \" ohhh  \" "+5,
+		description: "This insertion should not work because the title is already present into the database and therefore the url generated will create confusion", 
+		url: "http://www.fake.com",
+		urlImage: "http://www.urlthatdoesntexist.com",
+		author: "UnitTest"+i,
+		source: "http://www.sourcethatdoesntexist.com",
+		category: "Bebe"
+	};
+
+	request.post({url : "http://localhost/api/echantillons-gratuits", formData:echantillonToInsert}, function(err, response, body){
+		body = JSON.parse(body);
+		test.equal(body.success, "ko");
+		test.done();
+	});
+	
+}
+
+
+
 exports.getEchantillonsThatHaveBeenInserted = function(test){
 	arrayOfBindGetRequest = new Array();
 	for(var i = 0; i < arrayOfEchantillonInserted.length; i++){
-		arrayOfBindGetRequest.push(request.get.bind(undefined, "http://localhost/api/echantillons-gratuits/"+arrayOfEchantillonInserted[i]._id));
+		arrayOfBindGetRequest.push(request.get.bind(undefined, "http://localhost/api/echantillons-gratuits/"+arrayOfEchantillonInserted[i]._id));//On met un title bidon car si le premier insert foire l'id vaut undefined et c'est donc considere comme le title
 	}
 	async.parallel(arrayOfBindGetRequest, function(err, results){
-		test.equal(err, undefined, "Erreur dans le get des echantillons (erreur technique)" + err);
+		test.equal(err, undefined, "Erreur dans le get des echantillons (erreur techniqueAAAAAAAAAA)" + err);
+		
+		
 		for(var i = 0; i < arrayOfEchantillonInserted.length; i++){
 			var body = JSON.parse(results[i][0].body);
 			test.equal(body.success, "ok", "Success n'est pas egal a ok dans le get d'un echantillon");
-			test.notEqual(body.echantillon, null, "La reponse du insert ne contient pas un echantillon");
-			test.notEqual(body.echantillon, undefined, "La reponse du insert ne contient pas un echantillon");
-			test.equal(typeof body.echantillon._id, typeof 0, "L'id retourne dans l'insert n'est pas un nombre");
-			test.equal(body.echantillon.title, arrayOfEchantillonInserted[i].title, "Title pas egal");
-			test.equal(body.echantillon.description, arrayOfEchantillonInserted[i].description, "Description pas egal");
-			test.equal(body.echantillon.url, arrayOfEchantillonInserted[i].url, "url pas egal");
-			test.equal(body.echantillon.urlImage, arrayOfEchantillonInserted[i].urlImage, "urlImage pas egal");
-			test.equal(body.echantillon.source, arrayOfEchantillonInserted[i].source, "Source pas egal");
-			test.equal(body.echantillon.author, arrayOfEchantillonInserted[i].author, "Author pas egal");
-			test.equal(body.echantillon.views, 1, "Les views n'ont pas augmente");//On check en meme temps si le comptage de la vue a marche
-			test.equal(body.echantillon.validated, false, "Les views n'ont pas augmente");
-		}
+			test.notEqual(body.echantillon, null, "La reponse du get ne contient pas un echantillon");
+			test.notEqual(body.echantillon, undefined, "La reponse du get ne contient pas un echantillon");
+			if(body.echantillon){//Car sinon en cas de retour ko les test suivants font planter toute la batterie de test
+				test.equal(typeof body.echantillon._id, typeof 0, "L'id retourne dans get n'est pas un nombre");
+				test.equal(body.echantillon.title, arrayOfEchantillonInserted[i].title, "Title pas egal");
+				test.equal(body.echantillon.description, arrayOfEchantillonInserted[i].description, "Description pas egal");
+				test.equal(body.echantillon.url, arrayOfEchantillonInserted[i].url, "url pas egal");
+				test.equal(body.echantillon.urlImage, arrayOfEchantillonInserted[i].urlImage, "urlImage pas egal");
+				test.equal(body.echantillon.source, arrayOfEchantillonInserted[i].source, "Source pas egal");
+				test.equal(body.echantillon.author, arrayOfEchantillonInserted[i].author, "Author pas egal");
+				test.equal(body.echantillon.views, 1, "Les views n'ont pas augmente");//On check en meme temps si le comptage de la vue a marche
+				test.equal(body.echantillon.validated, false, "Ils ont ete valide");		
+				test.equal(body.echantillon.urlClean, arrayOfEchantillonInserted[i].urlClean, "urlClean pas egal");					
+			}
+		}	
 		test.done();
 	});
 };
@@ -101,7 +134,9 @@ exports.updateEchantillon = function(test){
 			var body = JSON.parse(results[i][0].body);
 			test.equal(body.success, "ok", "Success n'est pas egal a ok dans le update d'un echantillon");
 			//test.equal(body.echantillon.urlClean, utils.cleanUrl(arrayOfEchantillonInserted[i].title), "URLClean n'est pas bonne");
-			arrayOfEchantillonInserted[i]= body.echantillon;
+			if(body.echantillon){
+				arrayOfEchantillonInserted[i]= body.echantillon;
+			}
 		}
 		test.done();
 	});
@@ -109,8 +144,8 @@ exports.updateEchantillon = function(test){
 
 exports.updateEchantillonThatDoesntExist = function(test){
 	request.put("http://localhost/api/echantillons-gratuits/-9", function(err, response, body){
-		body = JSON.parse(body);
-		test.equal(body.success, "ko");
+		body = JSON.parse(body);		
+		test.equal(body.success, "ko", "Erreur echantillon qui n'existe pas update");
 		test.done();
 	});
 };
@@ -127,20 +162,21 @@ exports.verifyEchantillonAfterUpdate = function(test){
 			test.equal(body.success, "ok", "Success n'est pas egal a ok dans le get d'un echantillon");
 			test.notEqual(body.echantillon, null, "La reponse du insert ne contient pas un echantillon");
 			test.notEqual(body.echantillon, undefined, "La reponse du insert ne contient pas un echantillon");
-			test.equal(typeof body.echantillon._id, typeof 0, "L'id retourne dans l'insert n'est pas un nombre");
-			test.equal(body.echantillon.title, arrayOfEchantillonInserted[i].title, "Title pas egal");
-			test.equal(body.echantillon.description, arrayOfEchantillonInserted[i].description, "Description pas egal");
-			test.equal(body.echantillon.url, arrayOfEchantillonInserted[i].url, "url pas egal");
-			test.equal(body.echantillon.urlImage, arrayOfEchantillonInserted[i].urlImage, "urlImage pas egal");
-			test.equal(body.echantillon.source, arrayOfEchantillonInserted[i].source, "Source pas egal");
-			test.equal(body.echantillon.author, arrayOfEchantillonInserted[i].author, "Author pas egal");
-			test.equal(body.echantillon.views, 2, "Les views n'ont pas augmente");//On check en meme temps si le comptage de la vue a marche
-			test.equal(body.echantillon.validated, false, "Les views sont valides");
+			if(body.echantillon){//Car sinon en cas de retour ko les test suivants font planter toute la batterie de test
+				test.equal(typeof body.echantillon._id, typeof 0, "L'id retourne dans l'insert n'est pas un nombre");
+				test.equal(body.echantillon.title, arrayOfEchantillonInserted[i].title, "Title pas egal");
+				test.equal(body.echantillon.description, arrayOfEchantillonInserted[i].description, "Description pas egal");
+				test.equal(body.echantillon.url, arrayOfEchantillonInserted[i].url, "url pas egal");
+				test.equal(body.echantillon.urlImage, arrayOfEchantillonInserted[i].urlImage, "urlImage pas egal");
+				test.equal(body.echantillon.source, arrayOfEchantillonInserted[i].source, "Source pas egal");
+				test.equal(body.echantillon.author, arrayOfEchantillonInserted[i].author, "Author pas egal");
+				test.equal(body.echantillon.views, 2, "Les views n'ont pas augmente");//On check en meme temps si le comptage de la vue a marche
+				test.equal(body.echantillon.validated, false, "Les views sont valides");	
+			}
 		}
 		test.done();
 	});
 }
-
 
 exports.verifyTheyExistWithASearchQuery = function(test){
 	arrayOfBindGetRequest = new Array();
@@ -152,26 +188,23 @@ exports.verifyTheyExistWithASearchQuery = function(test){
 		test.equal(err, undefined, "Erreur dans le search des echantillons (erreur technique)" + err);
 		
 		for(var i = 0; i < arrayOfEchantillonInserted.length; i++){
-		
-			
-		
+				
 			var body = JSON.parse(results[i][0].body);
-			test.equal(body.success, "ok", "Success n'est pas egal a ok dans le get d'un echantillon");
+			test.equal(body.success, "ok", "Success n'est pas egal a ok dans le search d'un echantillon");
 			test.notEqual(body.echantillon, null, "La reponse du search ne contient pas un echantillon");
 			
 			test.notEqual(body.echantillon, undefined, "La reponse du search ne contient pas un echantillon");
-			test.equal(typeof body.echantillon._id, typeof 0, "L'id retourne dans search n'est pas un nombre");
-			
-		
-			test.equal(body.echantillon.title, arrayOfEchantillonInserted[i].title, "Title pas egal");
-			test.equal(body.echantillon.description, arrayOfEchantillonInserted[i].description, "Description pas egal");
-			test.equal(body.echantillon.url, arrayOfEchantillonInserted[i].url, "url pas egal");
-			test.equal(body.echantillon.urlImage, arrayOfEchantillonInserted[i].urlImage, "urlImage pas egal");
-			test.equal(body.echantillon.source, arrayOfEchantillonInserted[i].source, "Source pas egal");
-			test.equal(body.echantillon.author, arrayOfEchantillonInserted[i].author, "Author pas egal");
-			test.equal(body.echantillon.views, 3, "Les views n'ont pas augmente");//On check en meme temps si le comptage de la vue a marche
-			test.equal(body.echantillon.validated, false, "Les views n'ont pas augmente");
-			
+			if(body.echantillon){//Car sinon en cas de retour ko les test suivants font planter toute la batterie de test
+				test.equal(typeof body.echantillon._id, typeof 0, "L'id retourne dans search n'est pas un nombre");
+				test.equal(body.echantillon.title, arrayOfEchantillonInserted[i].title, "Title pas egal");
+				test.equal(body.echantillon.description, arrayOfEchantillonInserted[i].description, "Description pas egal");
+				test.equal(body.echantillon.url, arrayOfEchantillonInserted[i].url, "url pas egal");
+				test.equal(body.echantillon.urlImage, arrayOfEchantillonInserted[i].urlImage, "urlImage pas egal");
+				test.equal(body.echantillon.source, arrayOfEchantillonInserted[i].source, "Source pas egal");
+				test.equal(body.echantillon.author, arrayOfEchantillonInserted[i].author, "Author pas egal");
+				test.equal(body.echantillon.views, 3, "Les views n'ont pas augmente");//On check en meme temps si le comptage de la vue a marche
+				test.equal(body.echantillon.validated, false, "Les views n'ont pas augmente");
+			}
 		}
 		
 		test.done();
@@ -179,8 +212,27 @@ exports.verifyTheyExistWithASearchQuery = function(test){
 }
 
 exports.verifyTheyDontExistWithASearchQuery = function(test){
-	test.done();
+	request.get("http://localhost/api/echantillons-gratuits/search/urlClean=ForSureThisURLDoesNotExist", function(err, response, body){
+		body = JSON.parse(body);		
+		test.equal(body.success, "ko", "Erreur echantillon a ete trouve dans le search");
+		test.done();
+	});
+
 }
+
+
+exports.deleteEchantillonThatDoesntExist = function(test){
+	request.del("http://localhost/api/echantillons-gratuits/-9", function(err, response, body){
+		body = JSON.parse(body);
+		test.equal(body.success, "ko");
+		test.done();
+	});
+};
+
+
+//----------------------------------------------
+//On clean tout ce que l'on vient de creeer
+//----------------------------------------------
 
 exports.deleteEchantillons = function(test){
 	arrayOfBindDeleteRequest = new Array();
@@ -198,29 +250,7 @@ exports.deleteEchantillons = function(test){
 	});
 };
 
-exports.deleteEchantillonThatDoesntExist = function(test){
-	request.del("http://localhost/api/echantillons-gratuits/-9", function(err, response, body){
-		body = JSON.parse(body);
-		test.equal(body.success, "ko");
-		test.done();
-	});
-};
-
-exports.verificationThatTheyDontExistAnyMore = function(test){
-	arrayOfBindGetRequest = new Array();
-	for(var i = 0; i < arrayOfEchantillonInserted.length; i++){
-		arrayOfBindGetRequest.push(request.get.bind(undefined, "http://localhost/api/echantillons-gratuits/"+arrayOfEchantillonInserted[i]._id));
-	}
-	
-	async.parallel(arrayOfBindGetRequest, function(err, results){
-		test.equal(err, undefined, "Erreur dans la suppression des echantillons (erreur technique)" + err);
-		for(var i = 0; i < arrayOfEchantillonInserted.length; i++){
-			var body = JSON.parse(results[i][0].body);
-			test.equal(body.success, "ko", "Success n'est pas egal a ko dans l'insert d'un echantillon");
-		}
-		test.done();
-	});
-};
+//On verify maintenant que les echantillons en prod fonctionne tjs
 
 exports.allEchantillonsPresentIntoDatabaseAreReachable = function(test){
 	request.get("http://localhost/api/echantillons-gratuits", function(err, response, body){
@@ -249,3 +279,22 @@ exports.allEchantillonsPresentIntoDatabaseAreReachable = function(test){
 		
 	});
 };
+
+
+exports.verificationThatTheyDontExistAnyMore = function(test){
+	arrayOfBindGetRequest = new Array();
+	for(var i = 0; i < arrayOfEchantillonInserted.length; i++){
+		arrayOfBindGetRequest.push(request.get.bind(undefined, "http://localhost/api/echantillons-gratuits/"+arrayOfEchantillonInserted[i]._id));
+	}
+	
+	async.parallel(arrayOfBindGetRequest, function(err, results){
+		test.equal(err, undefined, "Erreur dans la suppression des echantillons (erreur technique)" + err);
+		for(var i = 0; i < arrayOfEchantillonInserted.length; i++){
+			var body = JSON.parse(results[i][0].body);
+			test.equal(body.success, "ko", "Success n'est pas egal a ko dans l'insert d'un echantillon");
+		}
+		test.done();
+	});
+};
+
+

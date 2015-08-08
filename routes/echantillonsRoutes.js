@@ -43,7 +43,7 @@ exports.initRoute = function(app){
 		var id = req.params.id;
 		var valuesToModidy = req.body;
 				
-		echantillonService.modifyEchantillon(id, valuesToModidy, function(err, result){
+		echantillonService.modifyOneEchantillon({_id:id}, valuesToModidy, function(err, result){
 		
 			if(err){
 				res.statusCode = 501;
@@ -151,6 +151,7 @@ exports.initRoute = function(app){
 		res.setHeader('Content-Type', 'application/json');
 
 		var id = req.params.id;
+				
 		echantillonService.getOneEchantillon({_id: id}, function(err, result){
 			var messageToReturn = {};
 			if(err){
@@ -177,7 +178,17 @@ exports.initRoute = function(app){
 		var echantillonToInsert = req.body;
 			
 		echantillonService.insertEchantillon(echantillonToInsert, function(err, result){
-			res.end(JSON.stringify({success: "ok", echantillon: result}));
+			var messageToReturn = {};
+			if(err){
+				res.statusCode = 501;
+				messageToReturn.success = "ko";
+				messageToReturn.message = err.message;
+				res.end(JSON.stringify(messageToReturn));
+			}else{
+				messageToReturn.success = "ok";
+				messageToReturn.echantillon = result;
+				res.end(JSON.stringify(messageToReturn));
+			}
 		});
 		
 	});
