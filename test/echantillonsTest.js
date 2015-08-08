@@ -150,7 +150,11 @@ exports.verifyTheyExistWithASearchQuery = function(test){
 	
 	async.parallel(arrayOfBindGetRequest, function(err, results){
 		test.equal(err, undefined, "Erreur dans le search des echantillons (erreur technique)" + err);
+		
 		for(var i = 0; i < arrayOfEchantillonInserted.length; i++){
+		
+			
+		
 			var body = JSON.parse(results[i][0].body);
 			test.equal(body.success, "ok", "Success n'est pas egal a ok dans le get d'un echantillon");
 			test.notEqual(body.echantillon, null, "La reponse du search ne contient pas un echantillon");
@@ -158,17 +162,15 @@ exports.verifyTheyExistWithASearchQuery = function(test){
 			test.notEqual(body.echantillon, undefined, "La reponse du search ne contient pas un echantillon");
 			test.equal(typeof body.echantillon._id, typeof 0, "L'id retourne dans search n'est pas un nombre");
 			
-			/*
+		
 			test.equal(body.echantillon.title, arrayOfEchantillonInserted[i].title, "Title pas egal");
 			test.equal(body.echantillon.description, arrayOfEchantillonInserted[i].description, "Description pas egal");
-			
 			test.equal(body.echantillon.url, arrayOfEchantillonInserted[i].url, "url pas egal");
 			test.equal(body.echantillon.urlImage, arrayOfEchantillonInserted[i].urlImage, "urlImage pas egal");
 			test.equal(body.echantillon.source, arrayOfEchantillonInserted[i].source, "Source pas egal");
 			test.equal(body.echantillon.author, arrayOfEchantillonInserted[i].author, "Author pas egal");
 			test.equal(body.echantillon.views, 3, "Les views n'ont pas augmente");//On check en meme temps si le comptage de la vue a marche
 			test.equal(body.echantillon.validated, false, "Les views n'ont pas augmente");
-			*/
 			
 		}
 		

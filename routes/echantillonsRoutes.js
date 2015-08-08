@@ -94,7 +94,8 @@ exports.initRoute = function(app){
 		var param = req.params.param;
 		var value = req.params.value;
 		
-		var searchQuery = eval("{"+param+":'"+value+"'}");
+		var searchQuery = {};
+		searchQuery[param] = value;//On a besoin d'utiliser ce petit tric car sinon si on met dans getOneEchantillon direct param : value et bien il chercherait un echantillon qui a comme parametre un parametre qui s'appelle param
 				
 		echantillonService.getOneEchantillon(searchQuery, function(err, result){
 		

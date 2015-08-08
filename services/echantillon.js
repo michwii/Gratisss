@@ -53,7 +53,6 @@ exports.insertEchantillon = function (echantillon, callback){
 } 
 
 exports.getOneEchantillon = function (parametersOfSearch, callback){
-
 	Echantillons.findOne(parametersOfSearch, function (err, echantillon) {
 		
 		if(err){
