@@ -145,7 +145,6 @@ exports.verifyEchantillonAfterUpdate = function(test){
 exports.verifyTheyExistWithASearchQuery = function(test){
 	arrayOfBindGetRequest = new Array();
 	for(var i = 0; i < arrayOfEchantillonInserted.length; i++){
-		console.log(arrayOfEchantillonInserted[i].urlClean);
 		arrayOfBindGetRequest.push(request.get.bind(undefined, "http://localhost/api/echantillons-gratuits/search/urlClean="+arrayOfEchantillonInserted[i].urlClean));
 	}
 	
@@ -153,12 +152,13 @@ exports.verifyTheyExistWithASearchQuery = function(test){
 		test.equal(err, undefined, "Erreur dans le search des echantillons (erreur technique)" + err);
 		for(var i = 0; i < arrayOfEchantillonInserted.length; i++){
 			var body = JSON.parse(results[i][0].body);
-			console.log(body);
 			test.equal(body.success, "ok", "Success n'est pas egal a ok dans le get d'un echantillon");
 			test.notEqual(body.echantillon, null, "La reponse du search ne contient pas un echantillon");
-			/*
+			
 			test.notEqual(body.echantillon, undefined, "La reponse du search ne contient pas un echantillon");
 			test.equal(typeof body.echantillon._id, typeof 0, "L'id retourne dans search n'est pas un nombre");
+			
+			/*
 			test.equal(body.echantillon.title, arrayOfEchantillonInserted[i].title, "Title pas egal");
 			test.equal(body.echantillon.description, arrayOfEchantillonInserted[i].description, "Description pas egal");
 			

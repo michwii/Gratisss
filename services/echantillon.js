@@ -53,7 +53,9 @@ exports.insertEchantillon = function (echantillon, callback){
 } 
 
 exports.getOneEchantillon = function (parametersOfSearch, callback){
+
 	Echantillons.findOne(parametersOfSearch, function (err, echantillon) {
+		
 		if(err){
 			console.log("Erreur lors de la recherche d'un echantillon : " + err);
 			callback(err, null);
@@ -62,7 +64,7 @@ exports.getOneEchantillon = function (parametersOfSearch, callback){
 				echantillon.views++;
 				echantillon.save();
 			}
-			console.log(__line + __file + echantillon);
+			//console.log("Ligne 65 echantillonService.js" + JSON.stringify(echantillon));
 			callback(err, echantillon);
 		}
 	});

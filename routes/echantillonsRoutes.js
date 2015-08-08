@@ -94,7 +94,9 @@ exports.initRoute = function(app){
 		var param = req.params.param;
 		var value = req.params.value;
 		
-		echantillonService.getOneEchantillon({param:value}, function(err, result){
+		var searchQuery = eval("{"+param+":'"+value+"'}");
+				
+		echantillonService.getOneEchantillon(searchQuery, function(err, result){
 		
 			var messageToReturn = {};
 		
@@ -102,12 +104,12 @@ exports.initRoute = function(app){
 				res.statusCode = 501;
 				messageToReturn.success = "ko";
 				messageToReturn.message ="Erreur technique";
-				res.end(messageToReturn);
+				res.end(JSON.stringify(messageToReturn));
 			}else if(result == null){
 				res.statusCode = 404;
 				messageToReturn.success = "ko";
 				messageToReturn.message ="Erreur echantillon non trouve";
-				res.end(messageToReturn);
+				res.end(JSON.stringify(messageToReturn));
 			}else{
 				messageToReturn.success = "ok";
 				messageToReturn.echantillonPresent = (result == null) ? false : true;
