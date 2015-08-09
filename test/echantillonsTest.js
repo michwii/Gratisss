@@ -263,9 +263,11 @@ exports.allEchantillonsPresentIntoDatabaseAreReachable = function(test){
 		var arrayOfEchantillonBindRequest = new Array();
 		for(var i = 0; i < allEchantillons.length; i++){
 			var echantillon = allEchantillons[i];
-			//On va lancer une requette HTTP aussi bien sur l'API que sur l'interface WEB classique
-			arrayOfEchantillonBindRequest.push(request.get.bind(undefined, "http://localhost/echantillons-gratuits/titleBidon/"+echantillon._id));
-			arrayOfEchantillonBindRequest.push(request.get.bind(undefined, "http://localhost/api/echantillons-gratuits/"+echantillon._id));
+			if(echantillon.validated){
+				//On va lancer une requette HTTP aussi bien sur l'API que sur l'interface WEB classique
+				arrayOfEchantillonBindRequest.push(request.get.bind(undefined, "http://localhost/echantillons-gratuits/titleBidon/"+echantillon._id));
+				arrayOfEchantillonBindRequest.push(request.get.bind(undefined, "http://localhost/api/echantillons-gratuits/"+echantillon._id));
+			}
 		}
 		
 		async.parallel(arrayOfEchantillonBindRequest, function(err, responses){

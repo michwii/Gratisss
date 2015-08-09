@@ -113,7 +113,6 @@ exports.initRoute = function(app){
 				res.end(JSON.stringify(messageToReturn));
 			}else{
 				messageToReturn.success = "ok";
-				messageToReturn.echantillonPresent = (result == null) ? false : true;
 				messageToReturn.echantillon = result;
 				res.end(JSON.stringify(messageToReturn));
 			}

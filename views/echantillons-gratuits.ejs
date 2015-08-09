@@ -15,7 +15,6 @@
 
                 <input type="text" class="search-query form-control" placeholder="Search" />
             </div>
-
             <!-- Post Row -->
             <div class="row post_row">
                 
@@ -24,12 +23,12 @@
                 <div class="col-sm-4" style="height:570px">
                     <div class="post" >
                         <div class="img">
-                            <a href="<%- "/echantillons-gratuits/"+ echantillons[i].title +"/" + echantillons[i]._id%>" title="<%- echantillons[i].title %>">
+                            <a href="<%- "/echantillons-gratuits/"+ echantillons[i].urlClean +"/" + echantillons[i]._id%>" title="<%- echantillons[i].title %>">
                                 <img src="<%- echantillons[i].urlImage %>" alt="<%- echantillons[i].title %>" class="img-responsive" style="margin-left: auto;margin-right: auto;" />
                             </a>
                         </div>
                         <div class="text">
-                            <h5 class="titleEchantillons"><a href="<%- "/echantillons-gratuits/"+ echantillons[i].title +"/" + echantillons[i]._id%>" title="<%= echantillons[i].title %>"><%= echantillons[i].title %></a></h5>
+                            <h5 class="titleEchantillons"><a href="<%- "/echantillons-gratuits/"+ echantillons[i].urlClean +"/" + echantillons[i]._id%>" title="<%= echantillons[i].title %>"><%= echantillons[i].title %></a></h5>
                             <span class="date"><%= echantillons[i].insertedOn.toLocaleDateString() %></span>
                             <p style="height : 100px; overflow:hidden; padding-top:0px;">
 								<%- echantillons[i].description.substring(0, 200) %>
