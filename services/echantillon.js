@@ -83,7 +83,17 @@ exports.getOneEchantillon = function (parametersOfSearch, callback){
 		}else{
 			if(echantillon != null){//Au cas ou la base de donnees est vide et qu'il n'y a pas d'echantillon
 				echantillon.views++;
-				echantillon.save(callback);
+				echantillon.save(function(err, result){
+					//On ne peut pas mettre dirrectement le callback car la fonction save retourne 
+					//un parametre en plus qui est le num affecte. Et comme ca cree des problemes
+					//dans les callbacks des fonctions qui l'appelle on prefere gerer manuelement 
+					//la gestion du callback pour renvoyer les valeurs qu'on veut nous.
+					if(err){
+						callback(err, null);
+					}else{
+						callback(err, result);
+					}
+				});
 			}else{
 				callback(err, null);
 			}

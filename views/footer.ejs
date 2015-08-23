@@ -9,13 +9,13 @@
                     
                     <%for(var i = 0; i < mostViewedEchantillons.length - 2; i++){%>
 					<div class="post recent">
-                        <a href="/echantillons-gratuits/<%- mostViewedEchantillons[i].title + "/" +mostViewedEchantillons[i]._id %>">
+                        <a href="/echantillons-gratuits/<%- mostViewedEchantillons[i].urlClean + "/" +mostViewedEchantillons[i]._id %>">
                             <img src="<%= mostViewedEchantillons[i].urlImage %>" class="img-circle" />
                         </a>
                         <div class="date">
                             <%= mostViewedEchantillons[i].insertedOn.toLocaleDateString() %>
                         </div>
-                        <a href="/echantillons-gratuits/<%- mostViewedEchantillons[i].title + "/" +mostViewedEchantillons[i]._id %>" class="title">
+                        <a href="/echantillons-gratuits/<%- mostViewedEchantillons[i].urlClean + "/" +mostViewedEchantillons[i]._id %>" class="title">
                             <%= mostViewedEchantillons[i].title %>
                         </a>
                     </div>

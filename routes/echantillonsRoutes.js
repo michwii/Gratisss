@@ -14,17 +14,20 @@ exports.initRoute = function(app){
 		
 	});
 	
-	app.get('/echantillons-gratuits/:title/:id', function (req, res) {
+	app.get('/echantillons-gratuits/:urlClean/:id', function (req, res) {
 		var session = req.session;
 		var userConnected = session.user;
 		
 		var id = req.params.id;
+		var urlClean = req.params.urlClean;
 		
 		async.parallel([
-			echantillonService.getOneEchantillon.bind(undefined, {_id:id}),
+			echantillonService.getOneEchantillon.bind(undefined, {_id:id, urlClean: urlClean}),
 			echantillonService.getNewEchantillons
 		], function(err, result){
-			res.render(__dirname + '/../views/echantillon.ejs', {user: userConnected, echantillon: result[0], mostViewedEchantillons:req.mostViewedEchantillons, newEchantillons: result[1] });				
+			var echantillonToPrint = result[0];			
+			var newEchantillons = result[1];
+			res.render(__dirname + '/../views/echantillon.ejs', {user: userConnected, echantillon: echantillonToPrint, mostViewedEchantillons:req.mostViewedEchantillons, newEchantillons: newEchantillons });				
 		});
 				
 	});

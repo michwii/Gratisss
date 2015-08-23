@@ -27,7 +27,7 @@
                     <div class="post_content">
                         <h2><%- echantillon.title %></h2>
                         <span class="date">bidon</span>
-                        <p><%- echantillon.description %></p>
+                        <p><%- echantillon.description %>Ici devrais comparaitre la description</p>
                         <div class="author_box">
                             <div class="area"><%= echantillon.category %></div>
                         </div>
@@ -59,7 +59,7 @@
 							<% for(var i = 0; i < newEchantillons.length; i++){ %>
 							<div class="recent">
                                 <span>
-                                    <a href="<%- "/echantillons-gratuits/"+ newEchantillons[i].title +"/"+newEchantillons[i]._id %>"><img src="<%= newEchantillons[i].urlImage %>" alt=""></a>
+                                    <a href="<%- "/echantillons-gratuits/"+ newEchantillons[i].urlClean +"/"+newEchantillons[i]._id %>"><img src="<%= newEchantillons[i].urlImage %>" alt=""></a>
                                 </span>
                                 <p><%- newEchantillons[i].title %></p>
                             </div>
@@ -73,7 +73,7 @@
                             <ul class="recent_photos">
 								<%for(var i = 0; i < mostViewedEchantillons.length; i++){%>
                                 <li>
-                                    <a href="<%- "/echantillons-gratuits/"+ mostViewedEchantillons[i].title +"/"+mostViewedEchantillons[i]._id %>"><img src="<%= mostViewedEchantillons[i].urlImage %>"></a>
+                                    <a href="<%- "/echantillons-gratuits/"+ mostViewedEchantillons[i].urlClean +"/"+mostViewedEchantillons[i]._id %>"><img src="<%= mostViewedEchantillons[i].urlImage %>"></a>
 								</li>
 								<%}%>
                             </ul>

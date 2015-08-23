@@ -6,6 +6,8 @@ var cors = require("cors");
 var multer  = require('multer');
 var fs = require("fs");
 var mkdirp = require('mkdirp');//Sert a creer tout les sous repertoires necessaire. On l'utilise pour enregistrer un ulpoad avec comme sous folder la date du jour
+var striptags = require('striptags');//Permet d'enlever les tags html qui ne servent a rien dans les desrciptions
+
 var usersRoutes = require(__dirname + '/routes/usersRoutes');
 var echantillonsRoutes = require(__dirname + '/routes/echantillonsRoutes');
 var codesReductionRoutes = require(__dirname + '/routes/codesReductionRoutes');
@@ -55,16 +57,19 @@ app.use(function (req, res, next) {
 	});
 });
 
+app.locals.removeHTMLTags = function(html) {
+	return striptags(html);
+}
 
 usersRoutes.initRoute(app);
 echantillonsRoutes.initRoute(app);
 codesReductionRoutes.initRoute(app);
 
+
 app.get('/', function (req, res) {
 	var session = req.session;
 	var userConnected = session.user;
 	echantillonService.getOneEchantillon({daySelection: true}, function(err, result){
-		console.log(err);
 		if(result == null){
 			result = {};
 		}
