@@ -7,6 +7,7 @@ var multer  = require('multer');
 var fs = require("fs");
 var mkdirp = require('mkdirp');//Sert a creer tout les sous repertoires necessaire. On l'utilise pour enregistrer un ulpoad avec comme sous folder la date du jour
 var striptags = require('striptags');//Permet d'enlever les tags html qui ne servent a rien dans les desrciptions
+var sitemap = require('sitemap');//Permet de generer dynamiquement le sitemap.xml
 
 var usersRoutes = require(__dirname + '/routes/usersRoutes');
 var echantillonsRoutes = require(__dirname + '/routes/echantillonsRoutes');
@@ -14,6 +15,8 @@ var codesReductionRoutes = require(__dirname + '/routes/codesReductionRoutes');
 var utils = require(__dirname + '/services/utils.js');
 var userService = require(__dirname + '/services/users.js');
 var echantillonService = require(__dirname + '/services/echantillon.js');
+var codesReductionService = require(__dirname + '/services/codesReduction.js');
+
 
 var app = express();
 
@@ -98,6 +101,38 @@ app.get('/bons-de-reduction', function (req, res) {
 	res.render(__dirname + '/views/coming-soon.ejs', {user: userConnected, mostViewedEchantillons: req.mostViewedEchantillons});
 });
 
+app.get("/sitemap.xml", function(req, res){
+	var mySiteMap = sitemap.createSitemap ({
+		hostname: 'http://www.gratisss.fr',
+		cacheTime: 600000
+	});
+	mySiteMap.add({url: '/', changefreq: 'daily', priority: 1});
+	mySiteMap.add({url: '/points-de-fidelite/', changefreq: 'monthly', priority: 0.5});
+	mySiteMap.add({url: '/inscription/', changefreq: 'monthly', priority: 0.5});
+	mySiteMap.add({url: '/connexion/', changefreq: 'monthly', priority: 0.5});
+	mySiteMap.add({url: '/deconnexion/', changefreq: 'monthly', priority: 0.5});
+	mySiteMap.add({url: '/echantillons-gratuits/', changefreq: 'weekly', priority: 0.8});
+	mySiteMap.add({url: '/codes-de-reduction/', changefreq: 'weekly', priority: 0.8});
+	mySiteMap.add({url: '/bons-de-reduction/', changefreq: 'monthly', priority: 0.8});
+	
+	echantillonService.getAllEchantillons({validated:true}, function(err, echantillonsValidated){
+		for(var i = 0 ; i < echantillonsValidated.length; i++){
+			mySiteMap.add({url: '/echantillons-gratuits/' + echantillonsValidated[i].urlClean + "/" + echantillonsValidated[i]._id, changefreq: 'monthly', priority: 0.5});
+		}
+		
+		//ToDo: Une fois que chaque code de reduction aura son url modifier cette partie
+		//codesReductionService.getAllCodesReduction(null, function(err, allReductionCode){
+		
+			//mySiteMap.add({url: '/codes-de-reduction/' + allReductionCode[i].urlClean + "/" + echantillonsValidated[i]._id, changefreq: 'monthly', priority: 0.5});
+
+			res.header('Content-Type', 'application/xml');
+			res.send( mySiteMap.toString() );
+		//});
+
+	});
+
+
+});
 
 var server = app.listen(80, function(){
 	console.log("The server has been launched");

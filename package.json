@@ -17,6 +17,7 @@
     "multer": "^0.1.8",
     "nodeunit": "^0.9.1",
     "request": "^2.55.0",
+    "sitemap": "^1.1.0",
     "striptags": "^2.0.2"
   },
   "scripts": {
