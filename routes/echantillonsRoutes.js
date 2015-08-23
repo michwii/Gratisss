@@ -25,9 +25,20 @@ exports.initRoute = function(app){
 			echantillonService.getOneEchantillon.bind(undefined, {_id:id, urlClean: urlClean}),
 			echantillonService.getNewEchantillons
 		], function(err, result){
-			var echantillonToPrint = result[0];			
-			var newEchantillons = result[1];
-			res.render(__dirname + '/../views/echantillon.ejs', {user: userConnected, echantillon: echantillonToPrint, mostViewedEchantillons:req.mostViewedEchantillons, newEchantillons: newEchantillons });				
+		
+			if(err){
+				res.end("Desole une erreur technique s'est produite.");
+			}else{
+			
+				if(result[0] == null ){//Si l'echantillon chercher vaut null cela veut dire qu'il n'existe pas
+					res.end("Desole l'echantillon demande n'existe.");
+				}else{
+					var echantillonToPrint = result[0];			
+					var newEchantillons = result[1];
+					res.render(__dirname + '/../views/echantillon.ejs', {user: userConnected, echantillon: echantillonToPrint, mostViewedEchantillons:req.mostViewedEchantillons, newEchantillons: newEchantillons });				
+				}
+			}
+		
 		});
 				
 	});
