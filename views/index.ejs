@@ -28,7 +28,8 @@
 				<p><%- echantillonSelected.description %></p>
 				<a href="<%- echantillonSelected.url %>" class="btn btn-primary">Je le veux !</a>
 				<br/>
-				<div  class="fb-like"  data-share="true"  data-width="450"  data-show-faces="true" data-href="http://www.gratisss.fr/echantillons-gratuits/<%- echantillonSelected.urlClean + "/" + echantillonSelected.id %>"></div>
+				<br/>
+				<div  class="fb-like"  data-share="true"  data-width="450"  data-show-faces="true" data-href="http://www.gratisss.fr/echantillons-gratuits/<%- echantillonSelected.urlClean + "/" + echantillonSelected._id %>"></div>
 			</div>
 		</div>
 		<div class="row">
@@ -36,7 +37,7 @@
 				<img src="img/fleche1.png" />
 			</div>
 			<div class="col-sm-8">
-				<div class="fb-comments" data-href="http://www.gratisss.fr/echantillons-gratuits/<%- echantillonSelected.urlClean + "/" + echantillonSelected.id %>" data-numposts="2" data-colorscheme="light"></div>		
+				<div class="fb-comments" data-href="http://www.gratisss.fr/echantillons-gratuits/<%- echantillonSelected.urlClean + "/" + echantillonSelected._id %>" data-numposts="2" data-colorscheme="light"></div>		
 			</div>
 		</div>
 
