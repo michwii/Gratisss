@@ -1,28 +1,23 @@
-<div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v2.3&appId=332597090088357";
-  fjs.parentNode.insertBefore(js, fjs);
-  
-  FB.init({
-      appId      : '332597090088357', // App ID
-      channelURL : 'http://130.211.58.49/', // Channel File
-      status     : true, // check login status
-      cookie     : true, // enable cookies to allow the server to access the session
-      oauth      : true, // enable OAuth 2.0
-      xfbml      : true  // parse XFBML
-    });
+	<script>
+	  window.fbAsyncInit = function() {
+		FB.init({
+		  appId      : '936992283006564',
+		  xfbml      : true,
+		  version    : 'v2.4'
+		});
+	  };
 
-    FB.Event.subscribe('comment.create',
-        function(response) {
-            alert('A new comment has been added!');
-        }
-    );
+	  (function(d, s, id){
+		 var js, fjs = d.getElementsByTagName(s)[0];
+		 if (d.getElementById(id)) {return;}
+		 js = d.createElement(s); js.id = id;
+		 js.src = "//connect.facebook.net/en_US/sdk.js";
+		 fjs.parentNode.insertBefore(js, fjs);
+	   }(document, 'script', 'facebook-jssdk'));
+	</script>
 
-  
-}(document, 'script', 'facebook-jssdk'));</script>
+
+
     
 	<div class="navbar navbar-inverse navbar-static-top" role="navigation">
         <div class="container">
