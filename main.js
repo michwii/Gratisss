@@ -101,7 +101,7 @@ app.get('/bons-de-reduction', function (req, res) {
 	res.render(__dirname + '/views/coming-soon.ejs', {user: userConnected, mostViewedEchantillons: req.mostViewedEchantillons});
 });
 
-app.get("/privacy", function(req, res){
+app.get("/privacyPolicy", function(req, res){
 	var session = req.session;
 	var userConnected = session.user;
 	res.render(__dirname + '/views/privacy.ejs', {user: userConnected, mostViewedEchantillons: req.mostViewedEchantillons});
@@ -120,7 +120,7 @@ app.get("/sitemap.xml", function(req, res){
 	mySiteMap.add({url: '/inscription/', changefreq: 'monthly', priority: 0.5});
 	mySiteMap.add({url: '/connexion/', changefreq: 'monthly', priority: 0.5});
 	mySiteMap.add({url: '/deconnexion/', changefreq: 'monthly', priority: 0.5});
-	mySiteMap.add({url: '/privacy/', changefreq: 'monthly', priority: 0.1});
+	mySiteMap.add({url: '/privacyPolicy/', changefreq: 'monthly', priority: 0.1});
 	
 	echantillonService.getAllEchantillons({validated:true}, function(err, echantillonsValidated){
 		for(var i = 0 ; i < echantillonsValidated.length; i++){
