@@ -101,19 +101,26 @@ app.get('/bons-de-reduction', function (req, res) {
 	res.render(__dirname + '/views/coming-soon.ejs', {user: userConnected, mostViewedEchantillons: req.mostViewedEchantillons});
 });
 
+app.get("/privacy", function(req, res){
+	var session = req.session;
+	var userConnected = session.user;
+	res.render(__dirname + '/views/privacy.ejs', {user: userConnected, mostViewedEchantillons: req.mostViewedEchantillons});
+});
+
 app.get("/sitemap.xml", function(req, res){
 	var mySiteMap = sitemap.createSitemap ({
 		hostname: 'http://www.gratisss.fr',
 		cacheTime: 600000
 	});
 	mySiteMap.add({url: '/', changefreq: 'daily', priority: 1});
+	mySiteMap.add({url: '/echantillons-gratuits/', changefreq: 'weekly', priority: 0.8});
+	mySiteMap.add({url: '/codes-de-reduction/', changefreq: 'weekly', priority: 0.8});
+	mySiteMap.add({url: '/bons-de-reduction/', changefreq: 'monthly', priority: 0.8});
 	mySiteMap.add({url: '/points-de-fidelite/', changefreq: 'monthly', priority: 0.5});
 	mySiteMap.add({url: '/inscription/', changefreq: 'monthly', priority: 0.5});
 	mySiteMap.add({url: '/connexion/', changefreq: 'monthly', priority: 0.5});
 	mySiteMap.add({url: '/deconnexion/', changefreq: 'monthly', priority: 0.5});
-	mySiteMap.add({url: '/echantillons-gratuits/', changefreq: 'weekly', priority: 0.8});
-	mySiteMap.add({url: '/codes-de-reduction/', changefreq: 'weekly', priority: 0.8});
-	mySiteMap.add({url: '/bons-de-reduction/', changefreq: 'monthly', priority: 0.8});
+	mySiteMap.add({url: '/privacy/', changefreq: 'monthly', priority: 0.1});
 	
 	echantillonService.getAllEchantillons({validated:true}, function(err, echantillonsValidated){
 		for(var i = 0 ; i < echantillonsValidated.length; i++){
