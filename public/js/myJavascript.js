@@ -1,3 +1,20 @@
+function LogInFacebook(){
+	FB.login(function(response) {
+		if (response.status === 'connected') {
+		// Logged into your app and Facebook.
+			console.log("Connected into Facebook");
+		} else if (response.status === 'not_authorized') {
+		// The person is logged into Facebook, but not your app.
+			console.log("Connected into Facebook but without authorization");
+		} else {
+		// The person is not logged into Facebook, so we're not sure if
+		// they are logged into this app or not.
+			console.log("NOT Connected into Facebook");
+		}
+	});
+}
+
+
 function logIn(event){
 	var form = event.target;
 	event.stopPropagation(); // Stop stuff happening
