@@ -75,7 +75,7 @@ exports.siteMap = function(test){
 };
 
 exports.privacy = function(test){
-	request.get("http://localhost/privacy", function(err, response, body){
+	request.get("http://localhost/privacyPolicy", function(err, response, body){
 		test.equal(err, undefined, "Erreur Technique dans le sitemap page "+ err);
 		var statusCode = response.statusCode;
 		test.equal(statusCode, 200);
