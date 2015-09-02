@@ -21,7 +21,10 @@ var UsersSchema = new Schema({
 	password   	: String,
 	login		: String,
 	name    	: String,
-	surname		: String
+	surname		: String,
+	completeName: String,
+	city		: String,
+	points		: { type: Number, default: 0 }
 });
 var Users = mongoose.model('Users', UsersSchema);
 
@@ -55,7 +58,11 @@ exports.insertUser = function (user, callback){
 		}
 		callback(err, userInserted);
 	});
-} 
+};
+
+exports.modifyUser = function(criterias, newValues, callback){
+	Users.findOneAndUpdate(criterias, newValues, callback);
+}
 
 exports.emailAlreadyExist = function(email, callback){
 	Users.findOne({email: email}, function(err, result){

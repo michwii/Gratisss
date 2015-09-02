@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<% include header %>
+	<title>Gratisss.fr - Mon profil</title>
+
+	<link rel="stylesheet" href="/css/compiled/about.css" type="text/css" media="screen">
+	
+	<meta name="description" content="Gratisss.fr - De cette page vous pouvez voir les informations de votre profil et voir le nombre de points que vous avez cumule">
+
+</head>
+<body>
+	<% include navBar %>
+    <!-- Pricing Option 1 -->
+    <div id="features">
+        <div class="container">
+            <div class="head">
+                <h3>Bonjour <%= user.login %></h3>
+                <h6>Plus vous remplirez d'information sur votre profil plus vous aurez de chances de recevoir des cadeaux / echantillons / promotions gratuites</h6>
+            </div>
+
+			
+			<div class="row people">
+                <div class="row row1">
+
+
+                    <div class="col-md-3 bio_box bio_boxr">
+                        <img src="/img/ale.png" alt="">
+                    </div>
+					<div class="col-md-6">
+						<form onsubmit="return updateProfil(event);">
+							
+								<p>Login : <strong><%= user.login %></strong></p>
+								<div class="form-group">
+									<label for="completeName">Nom & Prenom</label>
+									<input type="completeName" class="form-control" name="completeName" placeholder="Je sens que vous vous appellez George..." value="<%- user.completeName %>" />
+								</div>
+								<div class="form-group">
+									<label for="email">Email</label>
+									<input type="email" class="form-control" name="email" placeholder="Promis on ne vous spammera pas !" value="<%- user.email %>" />
+								</div>
+								<label for="sexe">Sexe</label>
+								<select class="form-control" name="sexe">
+									<option value="Women" selected="<%- (user.sexe == "Women") ? "Selected": "Disabled"%>">Femme</option>
+									<option value="Men" selected="<%- (user.sexe == "Men") ? "Selected": "Disabled"%>" >Homme</option>
+									<option value="Other" selected="<%- (user.sexe == undefined) ? "Selected": "Disabled"%>" >Autre</option>
+								</select>
+								<div class="form-group">
+									<label for="city">Ville</label>
+									<input type="city" class="form-control" name="city" placeholder="Moi j'aimerai vivre pres de la mer ;)" value="<%- user.city %>" />
+								</div>
+								<input type="hidden" name="id" value="<%- user._id %>" />
+								<input type="submit" class="btn btn-primary"  value="Mettre a jour mon profil" />
+						</form>
+					</div>
+                </div>
+            </div>
+			
+
+
+        </div>
+    </div>
+
+
+<% include footer %>
+</body>
+</html>

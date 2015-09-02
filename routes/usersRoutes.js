@@ -18,12 +18,32 @@ exports.initRoute = function(app){
 		userService.delete(id, function(err){
 			var returnedMessage = new Object();
 			if(err){
-				returnedMessage.sucess = "ko";
+				res.statusCode = 404;
+				returnedMessage.success = "ko";
 				returnedMessage.message = "L'utilisateur n'a pas ete supprime";
 			}
 		
-			returnedMessage.sucess = "ok";
+			returnedMessage.success = "ok";
 			returnedMessage.message = "L'utilisateur a ete supprime correctement";
+			res.end(JSON.stringify(returnedMessage));
+		});
+	});
+	
+	app.put('/api/users/:id', function (req, res) {
+		res.setHeader('Content-Type', 'application/json');
+		var id = req.params.id;
+		var newValues = req.body;
+		userService.modifyUser({_id:id}, newValues, function(err){
+			var returnedMessage = new Object();
+			if(err){
+				console.log(err);
+				res.statusCode = 404;
+				returnedMessage.success = "ko";
+				returnedMessage.message = "L'utilisateur n'a pas ete modifie";
+			}
+		
+			returnedMessage.success = "ok";
+			returnedMessage.message = "L'utilisateur a ete modifie correctement";
 			res.end(JSON.stringify(returnedMessage));
 		});
 	});
@@ -74,6 +94,7 @@ exports.initRoute = function(app){
 		userService.getOneUser({email: email, password:md5(password)}, function(err, result){
 			var returnedMessage = new Object();
 			if(err || result == null){
+				res.statusCode = 403;
 				returnedMessage.success = "ko";
 				returnedMessage.message = "Le login ou le mot de passe sont incorrects"
 				res.end(JSON.stringify(returnedMessage));
@@ -84,6 +105,27 @@ exports.initRoute = function(app){
 				res.end(JSON.stringify(returnedMessage));
 			}
 		});
+	});
+	
+	app.get('/users/:id', function(req, res){
+		var session = req.session;
+		var userConnected = session.user;
+		var id = req.params.id;
+		if(userConnected != null && userConnected._id == id){
+		
+			//On va chercher la derniere version de l'user dans le cas ou dans la requete precedente on la mit a jour et que celui present dans la requete ne soit plus a jour.
+			userService.getOneUser({_id:id}, function(err, userInfo){
+				if(err){
+					res.statusCode = 501;
+					res.render(__dirname + '/../views/technicalError.ejs');				
+				}else{
+					res.render(__dirname + '/../views/users.ejs', {user: userInfo, mostViewedEchantillons: req.mostViewedEchantillons});		
+				}
+			});
+		}else{
+			res.statusCode = 403;
+			res.render(__dirname + '/../views/unAuthorized.ejs');	
+		}
 	});
 	
 	app.get('/inscription', function (req, res) {
