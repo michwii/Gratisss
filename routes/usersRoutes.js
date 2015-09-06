@@ -11,41 +11,93 @@ exports.initRoute = function(app){
 			res.end(JSON.stringify(result));
 		});
 	});
+	
+	app.get('/api/users/:id', function (req, res) {
+		res.setHeader('Content-Type', 'application/json');
+		var id = req.params.id;
+		userService.getOneUser({_id:id}, function(err, result){
+			
+			var returnedMessage = new Object();
+			if(err){
+				res.statusCode = 501;
+				returnedMessage.success = "ko";
+				returnedMessage.message = "Erreur technique";
+			}else{
+				if(result == null){
+					res.statusCode = 404;
+					returnedMessage.success = "ko";
+					returnedMessage.message = "L'utilisateur n'existe pas";
+				}else{
+					returnedMessage.success = "ok";
+					returnedMessage.user = result;
+				}
+			}
+			res.end(JSON.stringify(returnedMessage));
+		});
+	});
 
 	app.delete('/api/users/:id', function (req, res) {
 		res.setHeader('Content-Type', 'application/json');
 		var id = req.params.id;
-		userService.delete(id, function(err){
-			var returnedMessage = new Object();
-			if(err){
-				res.statusCode = 404;
-				returnedMessage.success = "ko";
-				returnedMessage.message = "L'utilisateur n'a pas ete supprime";
-			}
 		
-			returnedMessage.success = "ok";
-			returnedMessage.message = "L'utilisateur a ete supprime correctement";
+		var session = req.session;
+		var userConnected = session.user;
+		
+		var returnedMessage = new Object();
+		if(userConnected && userConnected._id == id){
+			userService.delete(id, function(err){
+				if(err){
+					res.statusCode = 404;
+					returnedMessage.success = "ko";
+					returnedMessage.message = "L'utilisateur n'a pas ete supprime";
+				}else{
+					returnedMessage.success = "ok";
+					returnedMessage.message = "L'utilisateur a ete supprime correctement";
+				}
+			
+				res.end(JSON.stringify(returnedMessage));
+			});
+		}else{
+			res.statusCode = 403;
+			returnedMessage.success = "ko";
+			returnedMessage.message = "Vous n'etes pas authorise a supprime cet utilisateur";
 			res.end(JSON.stringify(returnedMessage));
-		});
+		}
+		
+		
 	});
 	
 	app.put('/api/users/:id', function (req, res) {
 		res.setHeader('Content-Type', 'application/json');
 		var id = req.params.id;
 		var newValues = req.body;
-		userService.modifyUser({_id:id}, newValues, function(err){
-			var returnedMessage = new Object();
-			if(err){
-				console.log(err);
-				res.statusCode = 404;
-				returnedMessage.success = "ko";
-				returnedMessage.message = "L'utilisateur n'a pas ete modifie";
-			}
 		
-			returnedMessage.success = "ok";
-			returnedMessage.message = "L'utilisateur a ete modifie correctement";
+		var session = req.session;
+		var userConnected = session.user;
+		
+		if(newValues.password){//Dans le cas ou le mec cherche a changer son mot de passe on le crypte avant de le sauver dans la datebase.
+			newValues.password = md5(newValues.password);
+		}
+		if(userConnected && userConnected._id == id){//On verify que c'est bien l'utilisateur courant qui modifie son compte
+			userService.modifyUser({_id:id}, newValues, function(err, result){
+				var returnedMessage = new Object();
+				if(err){
+					res.statusCode = 404;
+					returnedMessage.success = "ko";
+					returnedMessage.message = "L'utilisateur n'a pas ete modifie";
+				}else{
+					returnedMessage.success = "ok";
+					returnedMessage.user = result;
+				}
+				res.end(JSON.stringify(returnedMessage));
+			});
+		}else{
+			var returnedMessage = new Object();
+			res.statusCode = 403;
+			returnedMessage.success = "ko";
+			returnedMessage.message = "Vous n'avez pas le droit de modifier le profil d'un autre utilisateur";
 			res.end(JSON.stringify(returnedMessage));
-		});
+		}
 	});
 
 	app.post('/api/users', function (req, res) {
@@ -60,17 +112,19 @@ exports.initRoute = function(app){
 		
 		if(emailToSave != undefined && passwordToSave != undefined && loginToSave != undefined && utils.validateEmail(emailToSave)){
 			var userToCreate = {email: emailToSave, password: md5(passwordToSave), login: loginToSave};
-			var emailBindFunction = userService.emailAlreadyExist.bind(undefined, emailToSave);
-			var loginBindFunction = userService.loginAlreadyExist.bind(undefined, loginToSave);
+			//On met undefined dans le deuxieme parametre (qui correspond a l'id pour dire que c'est un nouveau user et donc forcement il a pas d'id.
+			var emailBindFunction = userService.emailAlreadyExist.bind(undefined, undefined, emailToSave);
+			var loginBindFunction = userService.loginAlreadyExist.bind(undefined, undefined, loginToSave);
 			async.parallel([emailBindFunction, loginBindFunction], function(err, result){
 				if(err || result[0] || result[1]){
+					res.statusCode = 501;
 					returnedMessage.success = "ko";
 					returnedMessage.message = "L'adresse email ou le login rensigne est deja utilise";
 					res.end(JSON.stringify(returnedMessage));
 				}else{
 					userService.insertUser(userToCreate, function(err, result){
 						var returnedMessage = new Object();
-						returnedMessage.sucess = "ok";
+						returnedMessage.success = "ok";
 						returnedMessage.userCreated = result;
 						session.user = result;
 						res.end(JSON.stringify(returnedMessage));
@@ -80,6 +134,7 @@ exports.initRoute = function(app){
 			});
 
 		}else{//we then return an exception
+			res.statusCode = 501;
 			returnedMessage.success = "ko";
 			returnedMessage.message = "Les parametres fournits en entree ne sont pas corrects ou imcomplets"
 			res.end(JSON.stringify(returnedMessage));
@@ -97,13 +152,12 @@ exports.initRoute = function(app){
 				res.statusCode = 403;
 				returnedMessage.success = "ko";
 				returnedMessage.message = "Le login ou le mot de passe sont incorrects"
-				res.end(JSON.stringify(returnedMessage));
 			}else{
 				returnedMessage.success = "ok";
 				returnedMessage.userConnected = result;
 				req.session.user = result;
-				res.end(JSON.stringify(returnedMessage));
 			}
+			res.end(JSON.stringify(returnedMessage));
 		});
 	});
 	

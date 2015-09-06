@@ -1,81 +1,296 @@
-var userService = require(__dirname + "/../services/users.js");
-var mongoose = require('mongoose');//On a besoin de mongoose pour pouvoir fermer la connection a la data base a la fin
-var async = require('async');
-var userSavedArray = new Array();
 
-exports.insert = function assertInsertion(assert){
-	assert.expect(10);
-	for(var i = 0; i < 10 ; i++){
-		var userToInsert = new userService.Users();
-		userToInsert.email = "email"+i+"@yahoo.fr";
-		userToInsert.password = "password";
-		userToInsert.login = "login"+i;
-		userToInsert.save(function (err, userSaved){
-			assert.equal(err, null, "L'insertion n'a pas fonctionne");
-			userSavedArray.push(userSaved);
-			if(userSavedArray.length ==10){
-				assert.done();
+//var userService = require(__dirname + "/../services/users.js");
+//var mongoose = require('mongoose');//On a besoin de mongoose pour pouvoir fermer la connection a la data base a la fin
+var async = require('async');
+var request = require('request');
+var md5 = require('md5');
+
+
+var userSavedArray = new Array();
+var userSavedCookie = new Array();
+
+for(var i = 0; i < 10 ; i++){
+	var userToInsert = {};
+	userToInsert.email = "email"+i+"@yahoo.fr";
+	userToInsert.password = "password"+i;
+	userToInsert.login = "login"+i;
+	userSavedArray.push(userToInsert);
+}
+
+var getAuthenticationCookie = function(email, password, callback){
+	request.post({url:"http://localhost/api/users/connexion", formData:{email:email, password:password}}, function(err, response, body){
+		if(err){
+			callback(err, null);
+		}else{
+			var parsedResponse = JSON.parse(body);
+			if(parsedResponse.success != "ok"){
+				callback(err, null);
+			}else if(response.headers && response.headers["set-cookie"]){
+				var cookie = response.headers["set-cookie"][0];
+				callback(err, cookie);
+			}else{
+				callback(err, null);
 			}
-		});
-	}
+		}
+	});
 };
 
-exports.insertDuplicateEmail = function assertInsertDuplicate(assert){
-	var userToInsert = new userService.Users();
+
+exports.insert = function(test){
+	var arrayBindPostRequest = new Array();
+	for(var i = 0; i < userSavedArray.length; i++){
+		arrayBindPostRequest.push(request.post.bind(undefined, {url:"http://localhost/api/users", formData:userSavedArray[i]}));
+	}
+	async.parallel(arrayBindPostRequest, function(err, results){
+		for(var i = 0 ; i < results.length; i++){
+			var parsedResponse = JSON.parse(results[i][0].body);
+			test.equal(parsedResponse.success,"ok", "Success pas egal a OK");
+			if(parsedResponse.success == "ok"){//On test avant car sinon la suite des tests ne se lance pas si une exeption se lance
+				userSavedArray[i]._id = parsedResponse.userCreated._id;
+				test.equal(parsedResponse.userCreated.email, userSavedArray[i].email);
+				test.equal(parsedResponse.userCreated.password, md5(userSavedArray[i].password));
+				test.equal(parsedResponse.userCreated.email, userSavedArray[i].email);
+				test.equal(parsedResponse.userCreated.email, userSavedArray[i].email);
+			}
+		}
+		test.done();
+	});
+};
+
+exports.insertDuplicateEmail = function(test){
+	var userToInsert = {};
 	userToInsert.email = "email5@yahoo.fr";
 	userToInsert.password = "password";
-	userToInsert.login= "loginWhichDoesExistYet";
-	userToInsert.save(function (err, userSaved){
-		assert.notEqual(err, null, "L'insertion duplicate email a fonctionner alors que ca n'aurait pas du");
-		assert.done();
+	userToInsert.login = "loginWhichDoesExistYet";
+	request.post({url:"http://localhost/api/users", formData:userToInsert}, function(err, request, body){
+		test.equal(err, null, "L'insertion duplicate email a fonctionner alors que ca n'aurait pas du");		
+		if(err == null){
+			var parsedResponse = JSON.parse(body);
+			test.equal(parsedResponse.success, "ko", "Duplicate mail insertion failed");
+			test.equal(request.statusCode, 501, "Duplicate mail insertion failed");
+		}
+		test.done();
 	});
-}
+};
 
-exports.insertDuplicateLogin = function assertInsertDuplicate(assert){
-	var userToInsert = new userService.Users();
+
+exports.insertDuplicateLogin = function(test){
+	var userToInsert = {};
 	userToInsert.email = "emailWhichDoesntExistYet@yahoo.fr";
 	userToInsert.password = "password";
-	userToInsert.login= "login5";
-	userToInsert.save(function (err, userSaved){
-		assert.notEqual(err, null, "L'insertion duplicate login a fonctionner alors que ca n'aurait pas du");
-		assert.done();
+	userToInsert.login = "login5";
+	request.post({url:"http://localhost/api/users", formData:userToInsert}, function(err, request, body){
+		test.equal(err, null, "L'insertion duplicate login a fonctionner alors que ca n'aurait pas du");		
+		if(err == null){
+			var parsedResponse = JSON.parse(body);
+			test.equal(parsedResponse.success, "ko", "Duplicate login insertion failed");
+			test.equal(request.statusCode, 501, "Duplicate login insertion failed");
+		}
+		test.done();
+	});
+};
+
+exports.lackOfEmailParameter = function(test){
+	var userToInsert = {};
+	//userToInsert.email = "emailWhichDoesntExistYet@yahoo.fr";
+	userToInsert.password = "password";
+	userToInsert.login = "loginWhichDoNotExist";
+	request.post({url:"http://localhost/api/users", formData:userToInsert}, function(err, request, body){
+		test.equal(err, null, "L'insertion lackOfEmail a fonctionner alors que ca n'aurait pas du");		
+		if(err == null){
+			var parsedResponse = JSON.parse(body);
+			test.equal(parsedResponse.success, "ko", "lackOfEmail insertion failed");
+			test.equal(request.statusCode, 501, "lackOfEmail insertion failed");
+		}
+		test.done();
+	});
+};
+
+exports.lackOfPasswordParameter = function(test){
+	var userToInsert = {};
+	userToInsert.email = "emailWhichDoesntExistYet@yahoo.fr";
+	//userToInsert.password = "password";
+	userToInsert.login = "loginWhichDoNotExist";
+	request.post({url:"http://localhost/api/users", formData:userToInsert}, function(err, request, body){
+		test.equal(err, null, "L'insertion lackOfPassword a fonctionner alors que ca n'aurait pas du");		
+		if(err == null){
+			var parsedResponse = JSON.parse(body);
+			test.equal(parsedResponse.success, "ko", "lackOfPassword insertion failed");
+			test.equal(request.statusCode, 501, "lackOfPassword insertion failed");
+		}
+		test.done();
+	});
+};
+
+exports.lackOfLoginParameter = function(test){
+	var userToInsert = {};
+	userToInsert.email = "emailWhichDoesntExistYet@yahoo.fr";
+	userToInsert.password = "password";
+	//userToInsert.login = "loginWhichDoNotExist";
+	request.post({url:"http://localhost/api/users", formData:userToInsert}, function(err, request, body){
+		test.equal(err, null, "L'insertion lackOfLogin a fonctionner alors que ca n'aurait pas du");		
+		if(err == null){
+			var parsedResponse = JSON.parse(body);
+			test.equal(parsedResponse.success, "ko", "lackOfLogin insertion failed");
+			test.equal(request.statusCode, 501, "lackOfLogin insertion failed");
+		}
+		test.done();
+	});
+};
+
+exports.insertMalFormedEmail = function(test){
+	var userToInsert = {};
+	userToInsert.email = "emailMalFormed@yahoo@jfd.fr";
+	userToInsert.password = "password";
+	userToInsert.login = "loginWhichDoNotExistYet";
+	request.post({url:"http://localhost/api/users", formData:userToInsert}, function(err, request, body){
+		test.equal(err, null, "L'insertion malFormed a fonctionner alors que ca n'aurait pas du");		
+		if(err == null){
+			var parsedResponse = JSON.parse(body);
+			test.equal(parsedResponse.success, "ko", "malFormed insertion failed");
+			test.equal(request.statusCode, 501, "malFormed insertion failed");
+		}
+		test.done();
+	});
+};
+
+//Connexion tests
+
+exports.connexion = function(test){
+	var bindGetAuthenticationCookie = new Array();
+	for(var i = 0; i < userSavedArray.length; i++){
+		bindGetAuthenticationCookie.push(getAuthenticationCookie.bind(undefined, userSavedArray[i].email, userSavedArray[i].password));
+	}
+	
+	async.parallel(bindGetAuthenticationCookie, function(err, results){
+		for(var i = 0; i < results.length; i++){
+			test.equal(err, null, "Erreur technique dans la connexion");
+			test.notEqual(results[i], null, "Erreur dans la connexion");
+			userSavedCookie.push(results[i]);
+		}
+		test.done();
+	});
+};
+
+exports.connexionWithFakeCredential = function(test){
+	request.post({url:"http://localhost/api/users/connexion", formData:{email:"michwii@yahoo.fr", password:"PasswordWhichIsNotCorrect"}}, function(err, response, body){
+		test.equal(err, null, "Erreur technique fake connexion");
+		if(!err){
+			var responseCode = response.statusCode;
+			var parsedResponse = JSON.parse(body);
+			test.equal(responseCode, 403, "Respond Code not equal to 403 for fake authentication");
+			test.equal(parsedResponse.success, "ko", "Success not ko for fake authentication");
+		}
+		test.done();
 	});
 }
 
-exports.duplicateEmail = function assertDuplicateMail(assert){
-	
-	async.map(["email5@yahoo.fr", "emailWhichDoesntExistYet@yahoo.fr"], userService.emailAlreadyExist, function(err, result){
-		assert.equal(err, null, "erreur dans la verif de duplication d'email");
-		assert.equal(result[0], true);
-		assert.equal(result[1], false, "erreur dans la verif de duplication d'email");
-		assert.done();
+exports.getProfilPage = function(test){
+	var bindGetProfilPage = new Array();
+	for(var i = 0 ; i < userSavedArray.length; i++){
+		bindGetProfilPage.push(request.get.bind(undefined, {url:"http://localhost/users/"+userSavedArray[i]._id , headers:{"Cookie": userSavedCookie[i]}}));
+	}
+	async.parallel(bindGetProfilPage, function(err, results){
+		test.equal(err, null, "Erreur Technique getProfilPage");
+		if(!err){
+			for(var i = 0 ; i < results.length; i++){
+				var responseCode = results[i][0].statusCode;
+				test.equal(responseCode, 200, "Erreur getProfilPage");
+			}
+		}
+		test.done();
 	});
-	
 };
 
-exports.duplicateLogin = function assertDuplicateMail(assert){
-	
-	async.map(["login5", "loginWhichDoesntExistYet"], userService.loginAlreadyExist, function(err, result){
-		assert.equal(err, null, "erreur dans la verif de duplication d'email");
-		assert.equal(result[0], true);
-		assert.equal(result[1], false, "erreur dans la verif de duplication d'email");
-		assert.done();
+exports.getProfilPageWithoutBeingConnected = function(test){
+	request.get("http://localhost/users/"+ userSavedArray[0]._id, function(err, response, body){
+		test.equal(err, null, "Erreur technique getProfilPageWithoutBeingConnected")
+		if(!err){
+			var responseCode = response.statusCode;
+			test.equal(responseCode, 403, "Consultation d'un profil sans etre authentifie");
+		}
+		test.done();
 	});
-	
 };
 
-exports.connexion = function assertConnexion(assert){
-
-	var bindVerifConnectionInformation = userService.connectionInformationAreCorrect.bind(undefined, "email1@yahoo.fr");//On cree un bnd pour appeller une fonction avec comme premier parametre par default une adresse email
-	async.map(["password","wrongPassword"], bindVerifConnectionInformation, function(err, result){
-		assert.equal(err, null, "Il y a un probleme dans le assert connexion");
-		assert.equal(result[0], true, "Il y a un probleme dans le assert connexion");
-		assert.equal(result[1], false, "Il y a un probleme dans le assert connexion");
-		assert.done();
+exports.getProfilOfSomeOneElse = function(test){
+	request.get({url : "http://localhost/users/"+ userSavedArray[0]._id, headers:{Cookie : userSavedCookie[1]}}, function(err, response, body){
+		test.equal(err, null, "Erreur technique getProfilOfSomeOneElse")
+		if(!err){
+			var responseCode = response.statusCode;
+			test.equal(responseCode, 403, "Consultation d'un profil of someone else");
+		}
+		test.done();
 	});
-	
-}
+};
 
+
+//End Connexion tests
+
+exports.updateUsers = function(test){
+	var arrayBindPutRequest = new Array();
+
+	for(var i = 0; i < userSavedArray.length ; i++){
+		var userToInsert = userSavedArray[i];
+		userToInsert.email = "newEmail"+i+"@yahoo.fr";
+		userToInsert.password = "newPassword"+i;
+		userToInsert.login = "newLogin"+i;
+		
+		arrayBindPutRequest.push(request.put.bind(undefined, {url:"http://localhost/api/users/"+ userToInsert._id, formData:userToInsert, headers:{Cookie:userSavedCookie[i]}}));
+
+	}
+	
+	async.parallel(arrayBindPutRequest, function(err, results){
+		for(var i = 0 ; i < results.length; i++){
+			var parsedResponse = JSON.parse(results[i][0].body);
+			test.equal(parsedResponse.success,"ok", "Success pas egal a OK");
+			if(parsedResponse.success == "ok"){//On test avant car sinon la suite des tests ne se lance pas si une exeption se lance
+				userSavedArray[i]._id = parsedResponse.user._id;
+				test.equal(parsedResponse.user.email, userSavedArray[i].email);
+				test.equal(parsedResponse.user.password, md5(userSavedArray[i].password));
+				test.equal(parsedResponse.user.email, userSavedArray[i].email);
+				test.equal(parsedResponse.user.email, userSavedArray[i].email);
+			}
+		}
+		test.done();
+	});
+};
+
+exports.updateWithEmailThatAlreadyExist = function(test){
+	var userToInsert = {};
+	userToInsert._id = userSavedArray[5]._id;
+	userToInsert.email = "newEmail2@yahoo.fr";//Email qui existe deja
+	userToInsert.password = "password";
+	userToInsert.login = "newNewLogin";
+	
+	request.put({url:"http://localhost/api/users/"+ userToInsert._id, formData:userToInsert, headers:{Cookie:userSavedCookie[5]}}, function(err, response, body){
+		test.equal(err, null, "Erreur technique with update duplicate email");
+		var parsedResponse = JSON.parse(body);
+		test.equal(parsedResponse.success, "ko", "update should not work because of duplicate email");
+		test.done();
+	});
+
+};
+
+exports.updateWithLoginThatAlreadyExist = function(test){
+	var userToInsert = {};
+	userToInsert._id = userSavedArray[4]._id;
+	userToInsert.email = "newEmail@yahoo.fr";
+	userToInsert.password = "password";
+	userToInsert.login = "newLogin5";//Login that already exist
+	
+	request.put({url:"http://localhost/api/users/"+ userToInsert._id, formData:userToInsert, headers:{Cookie:userSavedCookie[4]}}, function(err, response, body){
+		test.equal(err, null, "Erreur technique with update duplicate login");
+		var parsedResponse = JSON.parse(body);
+		test.equal(parsedResponse.success, "ko", "update should not work because of duplicate login");
+		test.done();
+	});
+
+};
+
+
+
+/*
 exports.gellAll = function assetGetAll(assert){
 	
 	var arrayOfSearchFunctionBinded = new Array();
@@ -91,18 +306,72 @@ exports.gellAll = function assetGetAll(assert){
 		assert.done();
 	});
 };
+*/
 
-exports.delete = function assertSuppression(assert){
-	assert.expect(10);
-	userSavedArray.forEach(function(user){
-		userService.delete(user._id, function(err){
-			assert.equal(err, null, "La suppression n'a pas fonctionne correctement");
-			userSavedArray.pop();
-			if(userSavedArray.length ==0){
-				mongoose.connection.close();//On ferme la connection pour etre sur que nodeunit se ferme correctement
-				assert.done();
-			}
-		});
-	});
+//Delete
+exports.deleteWithoutBeingAuthenticated = function(test){
+	var arrayBindDelete = new Array();
+	for(var i = 0; i < userSavedArray.length ; i++){
+		arrayBindDelete.push(request.del.bind(undefined, {url:"http://localhost/api/users/"+userSavedArray[i]._id }));
+	}
 	
+	async.parallel(arrayBindDelete, function(err, results){
+		for(var i = 0 ; i < results.length; i++){
+			var responseCode= results[i][0].statusCode;
+			var parsedResponse = JSON.parse(results[i][0].body);
+			test.equal(responseCode, 403, "Erreur deleteWithoutBeingAuthenticated ");
+			test.equal(parsedResponse.success, "ko", "Erreur deleteWithoutBeingAuthenticated");
+		}
+		test.done();
+	});
 };
+
+exports.deleteProfilOfSomeOneElse = function(test){
+	request.del({url : "http://localhost/api/users/"+ userSavedArray[0]._id, headers:{Cookie : userSavedCookie[2]}}, function(err, response, body){
+		test.equal(err, null, "Erreur technique deleteProfilOfSomeOneElse")
+		if(!err){
+			var responseCode = response.statusCode;
+			//var parsedResponse = JSON.parse(body);
+			console.log(body);
+			test.equal(responseCode, 403, "delete d'un profil of someone else");
+		}
+		test.done();
+	});
+};
+
+
+exports.delete = function (test){
+	var arrayBindDelete = new Array();
+	for(var i = 0; i < userSavedArray.length ; i++){
+		arrayBindDelete.push(request.del.bind(undefined, {url:"http://localhost/api/users/"+userSavedArray[i]._id, headers:{Cookie:userSavedCookie[i]}}));
+	}
+	
+	async.parallel(arrayBindDelete, function(err, results){
+		for(var i = 0 ; i < results.length; i++){
+			var parsedResponse = JSON.parse(results[i][0].body);
+			test.equal(parsedResponse.success,"ok", "Erreur delete");
+		}
+		test.done();
+	});
+};
+
+//End of delete
+
+exports.verifyTheyDoNotExistAnyMore = function(test){
+	var arrayBindGet = new Array();
+	for(var i = 0; i < userSavedArray.length ; i++){
+		arrayBindGet.push(request.get.bind(undefined, "http://localhost/api/users/"+userSavedArray[i]._id));
+	}
+	
+	async.parallel(arrayBindGet, function(err, results){
+		for(var i = 0 ; i < results.length; i++){
+			var parsedResponse = JSON.parse(results[i][0].body);
+			var statusCode = results[i][0].statusCode;
+			test.equal(parsedResponse.success,"ko", "Erreur apres suppression il existe encore");
+			test.equal(statusCode, 404, "Erreur apres suppression il existe encore");
+		}
+		test.done();
+	});
+
+};
+

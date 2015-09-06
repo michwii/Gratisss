@@ -66,6 +66,10 @@ function logIn(event){
 		}else{
 			window.location.replace("/");
 		}
+	}).fail(function(data){
+		var response = JSON.parse(data.responseText);//On utilise le json.parse car la response en cas d'erreur est retourne comme string
+		$('#formError').show();
+		$('#formError').html(response.message);
 	});
 }
 
@@ -89,6 +93,10 @@ function signUp(event){
 			console.log("redirection");
 			window.location.replace("/");
 		}
+	}).fail(function(data){
+		var response = JSON.parse(data.responseText);//On utilise le json.parse car la response en cas d'erreur est retourne comme string
+		$('#formError').show();
+		$('#formError').html(response.message);
 	});
 
 }

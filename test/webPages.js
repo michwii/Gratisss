@@ -65,6 +65,7 @@ exports.connexion = function(test){
 	});
 };
 
+
 exports.siteMap = function(test){
 	request.get("http://localhost/sitemap.xml", function(err, response, body){
 		test.equal(err, undefined, "Erreur Technique dans le sitemap page "+ err);

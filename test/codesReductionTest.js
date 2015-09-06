@@ -1,4 +1,4 @@
-var codesReductionService = require(__dirname + "/../services/codesReduction");
+//var codesReductionService = require(__dirname + "/../services/codesReduction");
 var utils = require(__dirname + "/../services/utils")
 var async = require('async');
 var request = require('request');

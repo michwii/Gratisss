@@ -1,6 +1,6 @@
 var async = require('async');
 var request = require('request');
-var echantillonService = require(__dirname + "/../services/echantillon");
+//var echantillonService = require(__dirname + "/../services/echantillon");
 var utils = require(__dirname + "/../services/utils");
 
 var arrayOfEchantillonInserted = new Array();
