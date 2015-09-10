@@ -1,8 +1,48 @@
 var async = require("async");
+var multer = require("multer");
+var mkdirp = require('mkdirp');//Sert a creer tout les sous repertoires necessaire. On l'utilise pour enregistrer un ulpoad avec comme sous folder la date du jour
+
 var echantillonService = require(__dirname + '/../services/echantillon');
 var utils = require(__dirname + '/../services/utils');
 
 exports.initRoute = function(app){
+	
+	
+	var customStorage = multer.diskStorage({
+		destination: function (req, file, callback) {
+			var currentDate = new Date();
+			var currentMonth = currentDate.getMonth()+1;
+			var currentDay = currentDate.getDate();
+			var finalDestinationUpload = './public/img/uploads/echantillons/' + currentDay + '/' + currentMonth;
+			
+			mkdirp.sync(finalDestinationUpload);//On creer toutes les sous directory necessaire
+			callback(null, finalDestinationUpload);
+		},
+		filename: function (req, file, callback) {
+			var echantillonTitle = "DefaultName";
+			if(req.body.title){
+				echantillonTitle = req.body.title;
+			}
+			var imageExtension = file.originalname.split('.').pop();
+			var finalFileName = echantillonTitle + '-' + Date.now() + "." + imageExtension;//Normalement la date ne sert a rien mais on sait jamais je la met pour vraiment differencier tous les fichiers de maniere unique
+			callback(null, finalFileName)
+		}
+	});
+	var uploadMiddleware= multer({
+		storage: customStorage, 
+		rename: function (fieldname, filename) {
+			return filename.replace(/\W+/g, '-').toLowerCase();
+		},
+		changeDest: function(dest, req, res) {//Dans cette fonction on va generer le dossier de destination en fonction de la date du jour. 
+			var currentDate = new Date();
+			var currentMonth = currentDate.getMonth()+1;
+			var currentDay = currentDate.getDate();
+			var finalDestinationUpload = dest + '/' + currentDay + '/' + currentMonth;
+					
+			mkdirp.sync(finalDestinationUpload);//On creer toutes les sous directory necessaire
+			return finalDestinationUpload;
+		}
+	});
 	
 	app.get('/echantillons-gratuits', function (req, res) {
 		var session = req.session;
@@ -185,11 +225,15 @@ exports.initRoute = function(app){
 		});
 	});
 	
-	app.post('/api/echantillons-gratuits', function(req, res){
+	app.post('/api/echantillons-gratuits', uploadMiddleware.single("echantillonPicture"),function(req, res){
 		res.setHeader('Content-Type', 'application/json');
 		
 		var echantillonToInsert = req.body;
-			
+		var echantillonPicture = req.file ;//On peut soit creer un echantillon avec une photo ou sans
+		if(echantillonPicture){
+			echantillonToInsert.urlImage = echantillonPicture.path;
+			echantillonToInsert.urlImage = echantillonToInsert.urlImage.replace('public', "").replace(/\\/g, '/');
+		}
 		echantillonService.insertEchantillon(echantillonToInsert, function(err, result){
 			var messageToReturn = {};
 			if(err){

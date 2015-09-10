@@ -1,6 +1,6 @@
 
-//var userService = require(__dirname + "/../services/users.js");
-//var mongoose = require('mongoose');//On a besoin de mongoose pour pouvoir fermer la connection a la data base a la fin
+//Attention il y a une difference entre les requete post/put envoyees avec le parametre form et formData. L'un envoi avec un content-type url-encoded l'autre est multi-part
+
 var async = require('async');
 var request = require('request');
 var md5 = require('md5');
@@ -8,6 +8,8 @@ var md5 = require('md5');
 
 var userSavedArray = new Array();
 var userSavedCookie = new Array();
+var singleUserWithProfilePicture = {};
+var singleUserWithProfilePictureCookie = {};
 
 for(var i = 0; i < 10 ; i++){
 	var userToInsert = {};
@@ -18,7 +20,8 @@ for(var i = 0; i < 10 ; i++){
 }
 
 var getAuthenticationCookie = function(email, password, callback){
-	request.post({url:"http://localhost/api/users/connexion", formData:{email:email, password:password}}, function(err, response, body){
+	
+	request.post({url:"http://localhost/api/users/connexion", form:{email:email, password:password}}, function(err, response, body){
 		if(err){
 			callback(err, null);
 		}else{
@@ -108,7 +111,7 @@ exports.lackOfEmailParameter = function(test){
 
 exports.lackOfPasswordParameter = function(test){
 	var userToInsert = {};
-	userToInsert.email = "emailWhichDoesntExistYet@yahoo.fr";
+	userToInsert.email = "lackOfPasswordParameter@yahoo.fr";
 	//userToInsert.password = "password";
 	userToInsert.login = "loginWhichDoNotExist";
 	request.post({url:"http://localhost/api/users", formData:userToInsert}, function(err, request, body){
@@ -154,6 +157,44 @@ exports.insertMalFormedEmail = function(test){
 	});
 };
 
+exports.insertWithAProfilePicture = function(test){
+
+	var userToInsert = {};
+	userToInsert.email = "emailOfSomeOneWithAPhoto@gmail.com";
+	userToInsert.password = "passwordOfSomeOneWithAPhoto";
+	userToInsert.login = "loginOfSomeOneWithAPhoto";
+	userSavedArray.push(userToInsert);
+
+	request.post({
+		url:"http://localhost/api/users", 
+		formData:{
+			email:"emailOfSomeOneWithAPhoto@gmail.com",
+			password:"passwordOfSomeOneWithAPhoto",
+			login:"loginOfSomeOneWithAPhoto",
+			profilePicture:request.get("http://localhost/img/uploads/profiles/defaultProfilePicture.png")
+		}},
+		function(err, response, body){
+			test.equal(err, null, "Erreur technique err != null dans insertWithAProfilePicture");
+			if(!err){
+				var parsedResponse = JSON.parse(body);
+				test.notEqual(parsedResponse.userCreated, null, "User vaut null dans insertWithAProfilePicture");
+				test.equal(parsedResponse.success, "ok", "Success != ok in insertWithAProfilePicture");
+				if(parsedResponse.userCreated){
+					var userToModify = userSavedArray[userSavedArray.length-1];
+					userToModify._id = parsedResponse.userCreated._id;
+					userToModify.profilePicture = parsedResponse.userCreated.profilePicture;
+					test.notEqual(parsedResponse.userCreated._id, null, "User.id vaut null dans insertWithAProfilePicture");
+					test.notEqual(parsedResponse.userCreated.login, null, "User.login vaut null dans insertWithAProfilePicture");
+					test.notEqual(parsedResponse.userCreated.password, null, "User.password vaut null dans insertWithAProfilePicture");
+					test.notEqual(parsedResponse.userCreated.email, null, "User.email vaut null dans insertWithAProfilePicture");
+					test.notEqual(parsedResponse.userCreated.profilePicture, null, "User.profilePicture vaut null dans insertWithAProfilePicture");
+				}
+			}
+			test.done();
+		}
+	);
+};
+
 //Connexion tests
 
 exports.connexion = function(test){
@@ -173,7 +214,7 @@ exports.connexion = function(test){
 };
 
 exports.connexionWithFakeCredential = function(test){
-	request.post({url:"http://localhost/api/users/connexion", formData:{email:"michwii@yahoo.fr", password:"PasswordWhichIsNotCorrect"}}, function(err, response, body){
+	request.post({url:"http://localhost/api/users/connexion", form:{email:"michwii@yahoo.fr", password:"PasswordWhichIsNotCorrect"}}, function(err, response, body){
 		test.equal(err, null, "Erreur technique fake connexion");
 		if(!err){
 			var responseCode = response.statusCode;
@@ -235,7 +276,8 @@ exports.updateUsers = function(test){
 		userToInsert.email = "newEmail"+i+"@yahoo.fr";
 		userToInsert.password = "newPassword"+i;
 		userToInsert.login = "newLogin"+i;
-		
+		userToInsert.profilePicture = request.get("http://localhost/img/uploads/profiles/defaultProfilePicture.png");
+
 		arrayBindPutRequest.push(request.put.bind(undefined, {url:"http://localhost/api/users/"+ userToInsert._id, formData:userToInsert, headers:{Cookie:userSavedCookie[i]}}));
 
 	}
@@ -245,11 +287,12 @@ exports.updateUsers = function(test){
 			var parsedResponse = JSON.parse(results[i][0].body);
 			test.equal(parsedResponse.success,"ok", "Success pas egal a OK");
 			if(parsedResponse.success == "ok"){//On test avant car sinon la suite des tests ne se lance pas si une exeption se lance
-				userSavedArray[i]._id = parsedResponse.user._id;
+				userSavedArray[i].profilePicture = parsedResponse.user.profilePicture;//On met a jour la nouvelle photo De Profile
 				test.equal(parsedResponse.user.email, userSavedArray[i].email);
 				test.equal(parsedResponse.user.password, md5(userSavedArray[i].password));
 				test.equal(parsedResponse.user.email, userSavedArray[i].email);
 				test.equal(parsedResponse.user.email, userSavedArray[i].email);
+				test.notEqual(parsedResponse.user.profilePicture, null);
 			}
 		}
 		test.done();
@@ -332,7 +375,6 @@ exports.deleteProfilOfSomeOneElse = function(test){
 		if(!err){
 			var responseCode = response.statusCode;
 			//var parsedResponse = JSON.parse(body);
-			console.log(body);
 			test.equal(responseCode, 403, "delete d'un profil of someone else");
 		}
 		test.done();
@@ -372,6 +414,19 @@ exports.verifyTheyDoNotExistAnyMore = function(test){
 		}
 		test.done();
 	});
-
 };
 
+exports.verifyThatTheProfilePicturesDoNotExistAnyMore = function(test){
+	var arrayBindGet = new Array();
+	for(var i = 0; i < userSavedArray.length ; i++){
+		arrayBindGet.push(request.get.bind(undefined, "http://localhost"+userSavedArray[i].profilePicture));
+	}
+	
+	async.parallel(arrayBindGet, function(err, results){
+		for(var i = 0 ; i < results.length; i++){
+			var statusCode = results[i][0].statusCode;
+			test.equal(statusCode, 404, "Erreur apres suppression l'image de profile existe encore");
+		}
+		test.done();
+	});
+};

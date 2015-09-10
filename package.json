@@ -14,7 +14,7 @@
     "mongodb": "2.0",
     "mongoose": "~3.8",
     "mongoose-auto-increment": "^3.0.8",
-    "multer": "^0.1.8",
+    "multer": "1.0.3",
     "nodeunit": "^0.9.1",
     "request": "^2.55.0",
     "sitemap": "^1.1.0",

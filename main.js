@@ -20,17 +20,18 @@ var codesReductionService = require(__dirname + '/services/codesReduction.js');
 
 var app = express();
 
-app.use(cors());
+app.use(cors());//Permet de faire des requetes cross domaine
 app.use(bodyParser.json());       // to support JSON-encoded bodies
+
+
+/*
 app.use(multer({ 
 	dest: './public/img/uploads', 
 	rename: function (fieldname, filename) {
-		console.log("rename +1");
 		return filename.replace(/\W+/g, '-').toLowerCase();
 	},
 	changeDest: function(dest, req, res) {//Dans cette fonction on va generer le dossier de destination en fonction de la date du jour. 
-		console.log("changeDest +1");
-		var stat = null;
+		var type = req.files.type;
 		var currentDate = new Date();
 		var currentMonth = currentDate.getMonth()+1;
 		var currentDay = currentDate.getDate();
@@ -41,6 +42,8 @@ app.use(multer({
 	}
 	
 }));
+*/
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
 app.use(session({
@@ -82,6 +85,7 @@ app.get('/', function (req, res) {
 
 app.post('/api/upload', function(req, res){
 	var fileUploaded = req.files.fileUpload;
+	console.log("Du post " + req.body.type);
 	fileUploaded.path = fileUploaded.path.replace('public', "").replace(/\\/g, '/');
 	var messageReturned = {};
 	messageReturned.success = "ok";

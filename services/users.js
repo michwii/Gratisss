@@ -16,15 +16,16 @@ if(!connection.readyState){
 autoIncrement.initialize(connection);
 
 var UsersSchema = new Schema({
-	id			: ObjectId,
-    email   	: String,
-	password   	: String,
-	login		: String,
-	name    	: String,
-	surname		: String,
-	completeName: String,
-	city		: String,
-	points		: { type: Number, default: 0 }
+	id				: ObjectId,
+    email   		: String,
+	password   		: String,
+	login			: String,
+	name    		: String,
+	surname			: String,
+	completeName	: String,
+	city			: String,
+	profilePicture	: { type: String, default: "/img/uploads/profiles/defaultProfilePicture.png" },
+	points			: { type: Number, default: 0 }
 });
 var Users = mongoose.model('Users', UsersSchema);
 
@@ -48,9 +49,9 @@ exports.Users = Users;
 
 exports.insertUser = function (user, callback){
 	var userToInsert = new Users();
-	userToInsert.email= user.email;
-	userToInsert.password = user.password;
-	userToInsert.login = user.login;
+	for(var propertyName in user) {
+		userToInsert[propertyName] = user[propertyName];
+	}
 	userToInsert.save(function (err, userInserted) {
 		if(err){
 			callback(err, null);
