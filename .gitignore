@@ -1,4 +1,7 @@
 node_modules/**
 data/**
 config/**
-public/img/uploads/**
+public/img/uploads/profiles/**
+public/img/uploads/profiles/!defaultProfilePicture.png
+public/img/uploads/echantillons/**
+public/img/uploads/codesReduction/**
