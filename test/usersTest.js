@@ -284,7 +284,7 @@ exports.updateUsers = function(test){
 	console.log("Creation des put request en memoire effectue");
 	async.parallel(arrayBindPutRequest, function(err, results){
 		
-		test.notEqual(err, null);
+		test.notEqual(err, undefined);
 		console.log(err);
 	
 		if(!err){
