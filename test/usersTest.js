@@ -284,10 +284,10 @@ exports.updateUsers = function(test){
 	console.log("Creation des put request en memoire effectue");
 	async.parallel(arrayBindPutRequest, function(err, results){
 		
-		test.notEqual(err, undefined);
-		console.log(err);
-	
-		if(!err){
+		test.equal(err, undefined, "Erreur technique pour l'update d'un user");
+		console.log("Erreur = " +err);
+		console.log("Results = " +results);
+		if(err == undefined){
 			for(var i = 0 ; i < results.length; i++){
 				console.log("Avant parsering");
 				var parsedResponse = JSON.parse(results[i][0].body);
