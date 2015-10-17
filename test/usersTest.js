@@ -284,7 +284,9 @@ exports.updateUsers = function(test){
 	console.log("Creation des put request en memoire effectue");
 	async.parallel(arrayBindPutRequest, function(err, results){
 		for(var i = 0 ; i < results.length; i++){
+			console.log("Avant parsering");
 			var parsedResponse = JSON.parse(results[i][0].body);
+			console.log("Apres parsering");
 			test.equal(parsedResponse.success,"ok", "Success pas egal a OK");
 			if(parsedResponse.success == "ok"){//On test avant car sinon la suite des tests ne se lance pas si une exeption se lance
 				userSavedArray[i].profilePicture = parsedResponse.user.profilePicture;//On met a jour la nouvelle photo De Profile
