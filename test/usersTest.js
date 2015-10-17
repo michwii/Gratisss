@@ -281,7 +281,7 @@ exports.updateUsers = function(test){
 		arrayBindPutRequest.push(request.put.bind(undefined, {url:"http://localhost/api/users/"+ userToInsert._id, formData:userToInsert, headers:{Cookie:userSavedCookie[i]}}));
 
 	}
-	
+	console.log("Creation des put request en memoire effectue");
 	async.parallel(arrayBindPutRequest, function(err, results){
 		for(var i = 0 ; i < results.length; i++){
 			var parsedResponse = JSON.parse(results[i][0].body);
