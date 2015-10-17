@@ -279,19 +279,17 @@ exports.updateUsers = function(test){
 		userToInsert.profilePicture = request.get("http://localhost/img/uploads/profiles/defaultProfilePicture.png");
 
 		arrayBindPutRequest.push(request.put.bind(undefined, {url:"http://localhost/api/users/"+ userToInsert._id, formData:userToInsert, headers:{Cookie:userSavedCookie[i]}}));
-
+		console.log(userToInsert);
+		console.log(userSavedCookie[i]);
 	}
 	console.log("Creation des put request en memoire effectue");
 	async.parallel(arrayBindPutRequest, function(err, results){
 		
 		test.equal(err, undefined, "Erreur technique pour l'update d'un user");
 		console.log("Erreur = " +err);
-		console.log("Results = " +results);
 		if(err == undefined){
 			for(var i = 0 ; i < results.length; i++){
-				console.log("Avant parsering");
 				var parsedResponse = JSON.parse(results[i][0].body);
-				console.log("Apres parsering");
 				test.equal(parsedResponse.success,"ok", "Success pas egal a OK");
 				if(parsedResponse.success == "ok"){//On test avant car sinon la suite des tests ne se lance pas si une exeption se lance
 					userSavedArray[i].profilePicture = parsedResponse.user.profilePicture;//On met a jour la nouvelle photo De Profile
