@@ -271,7 +271,8 @@ exports.getProfilOfSomeOneElse = function(test){
 exports.updateUsers = function(test){
 	var arrayBindPutRequest = new Array();
 
-	for(var i = 0; i < userSavedArray.length ; i++){
+	//for(var i = 0; i < userSavedArray.length ; i++){
+	for(var i = 0; i < 5 ; i++){
 		var userToInsert = userSavedArray[i];
 		userToInsert.email = "newEmail"+i+"@yahoo.fr";
 		userToInsert.password = "newPassword"+i;
