@@ -271,13 +271,13 @@ exports.getProfilOfSomeOneElse = function(test){
 exports.updateUsers = function(test){
 	var arrayBindPutRequest = new Array();
 
-	//for(var i = 0; i < userSavedArray.length ; i++){
-	for(var i = 0; i < 5 ; i++){
+	for(var i = 0; i < userSavedArray.length ; i++){
+	//for(var i = 0; i < 5 ; i++){
 		var userToInsert = userSavedArray[i];
 		userToInsert.email = "newEmail"+i+"@yahoo.fr";
 		userToInsert.password = "newPassword"+i;
 		userToInsert.login = "newLogin"+i;
-		userToInsert.profilePicture = request.get("http://localhost/img/uploads/profiles/defaultProfilePicture.png");
+		//userToInsert.profilePicture = request.get("http://localhost/img/uploads/profiles/defaultProfilePicture.png");
 
 		arrayBindPutRequest.push(request.put.bind(undefined, {url:"http://localhost/api/users/"+ userToInsert._id, formData:userToInsert, headers:{Cookie:userSavedCookie[i]}}));
 		console.log(userToInsert);
