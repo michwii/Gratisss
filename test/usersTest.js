@@ -278,7 +278,7 @@ exports.updateUsers = function(test){
 		userToInsert.password = "newPassword"+i;
 		userToInsert.login = "newLogin"+i;
 		//userToInsert.profilePicture = request.get("http://localhost/img/uploads/profiles/defaultProfilePicture.png");
-		//userToInsert.profilePicture = request.get("https://heavyeditorial.files.wordpress.com/2015/09/slim-jesus.jpg?quality=65&strip=all");
+		userToInsert.profilePicture = request.get("https://heavyeditorial.files.wordpress.com/2015/09/slim-jesus.jpg?quality=65&strip=all");
 
 		arrayBindPutRequest.push(request.put.bind(undefined, {url:"http://localhost/api/users/"+ userToInsert._id, formData:userToInsert, headers:{Cookie:userSavedCookie[i]}}));
 		console.log(userToInsert);
