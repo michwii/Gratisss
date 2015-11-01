@@ -22,28 +22,6 @@ var app = express();
 
 app.use(cors());//Permet de faire des requetes cross domaine
 app.use(bodyParser.json());       // to support JSON-encoded bodies
-
-
-/*
-app.use(multer({ 
-	dest: './public/img/uploads', 
-	rename: function (fieldname, filename) {
-		return filename.replace(/\W+/g, '-').toLowerCase();
-	},
-	changeDest: function(dest, req, res) {//Dans cette fonction on va generer le dossier de destination en fonction de la date du jour. 
-		var type = req.files.type;
-		var currentDate = new Date();
-		var currentMonth = currentDate.getMonth()+1;
-		var currentDay = currentDate.getDate();
-		var finalDestinationUpload = dest + '/' + currentDay + '/' + currentMonth;
-		
-		mkdirp.sync(finalDestinationUpload);//On creer toutes les sous directory necessaire
-		return finalDestinationUpload;
-	}
-	
-}));
-*/
-
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
 app.use(session({
@@ -52,6 +30,9 @@ app.use(session({
   saveUninitialized: true
 }));
 app.use(function (req, res, next) {
+
+	console.log("Je suis une requete midlleware");
+
 	echantillonService.getMostViewedEchantillons(function(err, result){
 	
 		if(result == null){
@@ -67,9 +48,10 @@ app.locals.removeHTMLTags = function(html) {
 	return striptags(html);
 }
 
-usersRoutes.initRoute(app);
-echantillonsRoutes.initRoute(app);
-codesReductionRoutes.initRoute(app);
+
+app.use(usersRoutes);
+app.use(echantillonsRoutes);
+app.use(codesReductionRoutes);
 
 
 app.get('/', function (req, res) {
